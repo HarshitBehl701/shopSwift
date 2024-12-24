@@ -10,7 +10,7 @@ function TwoLayoutSection({ imageObj, heading, description, linkObj }) {
           : "layout w-full h-72 flex items-center justify-center flex-row-reverse"
       }
     >
-      <div className="leftSection w-full  py-10 px-20 h-full">
+      <div className="leftSection w-1/2 py-10 px-20 h-full">
         <div
           className="imageContainer w-full h-full overflow-hidden rounded-md shadow-md bg-center bg-cover"
           style={{ backgroundImage: `url('${imageObj.imageLink}')` }}
@@ -19,13 +19,13 @@ function TwoLayoutSection({ imageObj, heading, description, linkObj }) {
       <div
         className={
           imageObj.direction == "left"
-            ? "rightSection p-10 w-full h-full"
-            : "rightSection p-10 w-full h-full  px-20"
+            ? "rightSection p-10 w-1/2 h-full"
+            : "rightSection p-10 w-1/2 h-full  px-20"
         }
       >
         <div className="textContainer">
           <h1 className="text-2xl ">{heading}</h1>
-          <p className="italic text-sm overflow-hidden text-ellipsis whitespace-nowrap  mb-2">
+          <p className="italic text-sm  mb-2 ">
             {description}
           </p>
         </div>

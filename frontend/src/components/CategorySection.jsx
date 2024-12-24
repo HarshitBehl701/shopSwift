@@ -32,6 +32,11 @@ function CategorySection() {
       image: "/furniture.jpg",
       name: "Furniture",
       link: "/products/furniture",
+    },
+    {
+      image: "/decor.jpg",
+      name:  "Home Decor",
+      link: "/products/home-decor",
     }
   ];
 
