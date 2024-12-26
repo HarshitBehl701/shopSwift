@@ -4,22 +4,10 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { handleError, handleSuccess } from "../utils";
 
 function Login() {
-  const [currentPasswordState, updateCurrentPasswordState] = useState({
-    input: "password",
-    icon: faEyeSlash,
-  });
-
   const [formInputFields, updateFormInputFields] = useState({
     email: "",
     password: "",
   });
-
-  const handleUpdateCurrentPasswordState = () => {
-    updateCurrentPasswordState({
-      input: currentPasswordState.input == "password" ? "text" : "password",
-      icon: currentPasswordState.input == "password" ? faEye : faEyeSlash,
-    });
-  };
 
   const handleFormInputFieldsOnChange = (ev) => {
     const { name, value } = ev.target;
@@ -38,20 +26,23 @@ function Login() {
       handleError("Password Length Must Be Between 8 - 16 Characters");
   };
 
+  const leftPanelObj = {
+    header: 'Join the <span  class="text-blue-600 hover:text-blue-700">Scatch</span> Community!',
+    subParaText:"Log in to access the best deals, manage your orders, and explore endless shopping possibilities."
+  }
+
+  const rightPanelObj  = {
+    handleFormSubmit:handleFormSubmit,
+    handleFormInputFieldsOnChange:handleFormInputFieldsOnChange,
+    formInputFields:  formInputFields,
+    linkText:"Don't have  an  account?",
+    redirectionLink:"/register",
+    submitFormBtnTxt:"Login",
+    nameFieldRequired:false
+  }
+
   return (
-    <UserLoginRegisterForm
-      subParaText={
-        "Log in to access the best deals, manage your orders, and explore endless shopping possibilities."
-      }
-      handleFormSubmit={handleFormSubmit}
-      handleFormInputFieldsOnChange={handleFormInputFieldsOnChange}
-      currentPasswordState={currentPasswordState}
-      handleUpdateCurrentPasswordState={handleUpdateCurrentPasswordState}
-      linkText={"Don't have  an  account?"}
-      redirectionLink={"/register"}
-      submitFormBtnTxt={"Login"}
-      nameFieldRequired={false}
-    />
+    <UserLoginRegisterForm leftPanelObj={leftPanelObj}   rightPanelObj={rightPanelObj} />
   );
 }
 

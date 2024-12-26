@@ -67,6 +67,11 @@ function Footer() {
                 Contact
               </Link>
             </li>
+            <li>
+              <Link to="/join-as-seller" className="hover:text-blue-500 text-sm">
+                Join As Seller
+              </Link>
+            </li>
           </ul>
           <ul className="cursor-pointer md:w-1/5 w-full">
             <li className="font-semibold">Get In Touch</li>
