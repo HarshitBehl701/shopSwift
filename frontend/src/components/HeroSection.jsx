@@ -26,8 +26,8 @@ function HeroSection() {
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-black bg-opacity-50 text-white w-full h-full flex items-center justify-center flex-col">
-            <h1 className="md:text-3xl text-xl  md:mb-2 mb-1">{sliderText[index].title}</h1>
-            <p  className="w-[50%] md:text-sm text-xs text-center italic">{sliderText[index].description}</p>
+            <h1 className="md:text-3xl  md:mb-2 mb-1">{sliderText[index].title}</h1>
+            <p  className="md:w-[50%] w-[70%] md:text-sm text-xs text-center italic">{sliderText[index].description}</p>
           </div>
         </div>
       ))}

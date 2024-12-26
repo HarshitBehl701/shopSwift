@@ -41,9 +41,9 @@ function CategorySection() {
   ];
 
   return (
-    <div className="categorySection">
+    <div className="categorySection w-[95%] mx-auto">
       <h1 className="md:text-2xl  text-xl text-center font-semibold">Shop By Category</h1>
-      <div className="categorySlider mt-8 flex items-center justify-center gap-14 flex-wrap">
+      <div className="categorySlider mt-8 flex items-center justify-center md:gap-14 gap-6 flex-wrap">
         {categoriesSection.map((category, index) => (
           <Link to={category.link} key={index}   className="flex flex-col items-center justify-center">
             <div className="border md:w-24 md:h-24   w-20  h-20  rounded-full shadow-lg mb-1 overflow-hidden">

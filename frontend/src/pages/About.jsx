@@ -87,7 +87,7 @@ function About() {
           linkObj={section.linkObj}
         />
       ))}
-
+      
       <Footer />
     </>
   );
