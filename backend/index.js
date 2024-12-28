@@ -6,7 +6,11 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 
 //Routers
+const userRouter = require('./routers/userRouter');
+const sellerRouter =  require('./routers/sellerRouter');
 
+app.use('/user',userRouter);
+app.use('/seller',sellerRouter);
 
 
 
