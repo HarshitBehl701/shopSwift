@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const sellerSchema = mongoose.Schema({
   fullname: String,
   email: String,
-  brandName: String,
+  brandname: String,
+  password:String,
   gstin: Number,
   brandLogo: Buffer,
   products: [
@@ -23,7 +24,7 @@ const sellerSchema = mongoose.Schema({
   is_active: {
     type: Number,
     enum: [0,1],
-    default: 1,
+    default: 0,
   },
 });
 

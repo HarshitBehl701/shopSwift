@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { type } = require("os");
 
 const productSchema = mongoose.Schema({
   name: String,
@@ -8,17 +9,28 @@ const productSchema = mongoose.Schema({
     ref: "seller",
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "category",
+    type: String,
+    enum:  ['electronics','clothing','shoes','accessories','baby','furniture','home-decor'],
   },
-  price: Number,
-  discount: Number,
+  price: {
+    type: Number,
+    min: 0,
+  },
+  discount: {
+    type: Number,
+    min: 0,
+  },
   platformFee: {
     type: Number,
+    min: 0,
     default: 0,
   },
   description: String,
-  views: Number,
+  views: {
+    type: Number,
+    min: 0,
+    default: 0
+  },
   rating:  {
     type:  Number,
     max: 5,

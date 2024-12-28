@@ -1,5 +1,5 @@
-const db = require("../config/db");
-const userModal = require("../models/userModal");
+const db = require("../../config/db");
+const userModal = require("../../models/userModal");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -16,11 +16,16 @@ module.exports.registerController = async (req, res) => {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
-    await userModal.create({
+    const user = await userModal.create({
       name,
       email,
       password: hashPassword,
     });
+
+    if (!user)
+      return res
+        .status(500)
+        .send({ message: "Internal Server Error", status: false });
 
     return res
       .status(201)
@@ -51,7 +56,7 @@ module.exports.loginController = async (req, res) => {
         .send({ message: "Email  Or  Password   Is    Incorrect" });
 
     const token = await jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user._id},
       process.env.SECRET
     );
 
