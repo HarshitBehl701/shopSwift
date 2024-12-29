@@ -32,12 +32,15 @@ function Login() {
     else{
       try{
         const response  = await  loginUser(formInputFields,'user');
-        if(response.status) localStorage.setItem('token',response.token);
+        if(response.status) 
+        {
+          localStorage.setItem('token',response.token);
+          localStorage.setItem('userType','user');
+        }
         
         handleSuccess('Successfully  Login  to  your Account');        
         setTimeout(()=> handleSuccess('Redirecting you  to the home page'),1000);
         setTimeout(() => navigate('/home'),2000);
-
       }catch(error){
         handleError(error.message);
       }

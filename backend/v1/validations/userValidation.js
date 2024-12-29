@@ -11,4 +11,18 @@ const  loginSchema =   Joi.object({
     password: Joi.string().min(8).max(16).required()
 })
 
-module.exports  = {registerSchema,loginSchema};
+const updateUserSchema =  Joi.object({
+    name: Joi.string().min(3).max(30).required(),
+    address: Joi.string().allow(''),
+    contact: Joi.string().pattern(/^\d{10}$/)
+})
+
+const profilePicSchema = Joi.object({
+    file: Joi.object({
+        originalname: Joi.string().required(),
+        mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/jpg').required(),
+        size: Joi.number().max(2 * 1024 * 1024).required()  //maximum 2 MB
+    })
+})
+
+module.exports  = {registerSchema,loginSchema,updateUserSchema,profilePicSchema};

@@ -30,6 +30,8 @@ function SellerLogin() {
       try{
         const response =  await  loginUser(formData,'seller');
         localStorage.setItem('token',response.token);
+        localStorage.setItem('userType','seller');
+        
         if(response.status)  handleSuccess('Successfully login  to  your account');
 
         setTimeout(()=>{handleSuccess('Redirecting   you to home  page')},1000);
@@ -54,7 +56,7 @@ function SellerLogin() {
     formData: formData,
     handleFormInputFieldsOnChange: handleFormInputFieldsOnChange,
     handleFormSubmit: handleFormSubmit,
-    linkTextPath: "/seller-login",
+    linkTextPath: "/seller-registration",
     linkText: "Don't  have account?",
   };
 

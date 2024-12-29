@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons'; 
 
-function ManageOrders() {
+function ManageOrders({userProductDetail,currentPage}) {
   return (
     <>
-        <h1 className='font-semibold'>Orders</h1>
-        <ul className='mt-4'>
+        <h1 className='font-semibold'>{currentPage}</h1>
+        <ul className={(!userProductDetail) ? 'hidden'  :  'mt-4'}>
             <li className='my-2  border-b border-zinc-300 p-2  flex justify-between'>
                 <div className="leftSide flex gap-3">
                 <div className="imageContainer">
@@ -26,6 +26,7 @@ function ManageOrders() {
                 </div>
             </li>
         </ul>
+        {(!userProductDetail)  && <p className='italic  mt-4 text-sm'>No items in  your {currentPage}...</p>}
     </>
   )
 }

@@ -2,6 +2,16 @@ import React , {useState} from "react";
 import { Link } from "react-router-dom";
 
 function UserAdminNav() {
+
+  const currentUser = localStorage.getItem('userType');
+
+  const  menuOptionsAsPerUsers =  {
+    user:  ['profile','cart','order','whislist'],
+    seller:  ['profile','add-product','manage-product']
+  }
+
+  const currentMenuOptionAsPerCurrentUser = menuOptionsAsPerUsers[currentUser];
+
     const [isDropMenuOpen, updateIsDropMenuOpen] = useState(false);
       const handleMenuToggle = () =>
         isDropMenuOpen ? updateIsDropMenuOpen(false) : updateIsDropMenuOpen(true);
@@ -38,40 +48,22 @@ function UserAdminNav() {
         </button>
         <div className={`${isDropMenuOpen ? ''  : 'hidden'} w-full md:block md:w-auto`} id="navbar-default">
           <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li>
+            {currentMenuOptionAsPerCurrentUser.map((option,index) => {
+              let menuName = (option.split('-').length  > 1)  ? option.split('-')[0].charAt(0).toUpperCase() +  option.split('-')[0].slice(1) + ' ' +   option.split('-')[1].charAt(0).toUpperCase() +  option.split('-')[1].slice(1) : option.charAt(0).toUpperCase() + option.slice(1);
+              return <li   key={index}>
               <Link
-                to="/user/profile"
+                to={`/${currentUser}/${option}`}
                 className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
               >
-                Profile
+                {menuName}
               </Link>
             </li>
+
+            })}
+
             <li>
               <Link
-                to="/user/cart"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                Cart
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/user/orders"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                Orders
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/user/whishlist"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                Whislist
-              </Link>
-            </li>
-            <li>
-              <Link
+              to={'/logout'}
                 className="block py-2 px-3 text-red-600 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
               >
                 Logout

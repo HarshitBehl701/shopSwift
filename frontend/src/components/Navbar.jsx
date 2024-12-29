@@ -101,6 +101,22 @@ function Navbar({ currentPage }) {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                to={`/${localStorage.getItem('userType')}/profile`}
+                className={
+                  token
+                    ? "profileiconcontianer  flex  items-center justify-center"
+                    : "hidden"
+                }
+              >
+                <img
+                  src="/assets/user.png"
+                  alt="profile"
+                  className="object-cover w-7  h-7 rounded-full border"
+                />
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

@@ -5,15 +5,15 @@ const sellerSchema = mongoose.Schema({
   email: String,
   brandname: String,
   password:String,
-  gstin: Number,
-  brandLogo: Buffer,
+  gstin: String,
+  brandLogo: String,
   products: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "product",
     },
   ],
-  contact: Number,
+  contact: String,
   address: String,
   rating:{
     type:  Number,
@@ -24,7 +24,7 @@ const sellerSchema = mongoose.Schema({
   is_active: {
     type: Number,
     enum: [0,1],
-    default: 0,
+    default: 1,
   },
 });
 

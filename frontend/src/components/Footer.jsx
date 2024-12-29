@@ -67,7 +67,7 @@ function Footer() {
                 Contact
               </Link>
             </li>
-            <li>
+            <li className={(localStorage.getItem('token')) ? 'hidden'  : ''}>
               <Link to="/seller-login" className="hover:text-blue-500 text-sm">
                 Join As Seller
               </Link>
