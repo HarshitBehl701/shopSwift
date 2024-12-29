@@ -1,13 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Cards({ imageObj, title, description }) {
+function Cards({ imageSrc, imageAlt , title, description }) {
   return (
     <div className="card snap-center  shrink-0 border cursor-pointer md:w-52  min-w-36 md:h-64 h-52   shadow-md flex items-center justify-between flex-col rounded-lg  overflow-hidden">
     <img
-          src={imageObj.src}
-          alt={imageObj.alt}
-          className="h-[75%]  w-full"
+          src={imageSrc || "https://placehold.co/300x200/png"}
+          alt={imageAlt}
+          className="h-[75%]  w-full  object-cover"
         />
         <div className="bottomSection  w-full  h-[25%] px-2 flex border items-center  justify-between">
           <div className="textContainer w-3/4">

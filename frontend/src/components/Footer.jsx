@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function Footer() {
   return (
     <>
-      <div className="getEmailUpdates  w-full mt-20 md:h-16 h-fit py-2 px-3 bg-[#B0D7FF]">
+      <div className="getEmailUpdates  w-full md:h-16 h-fit py-2 px-3 bg-[#B0D7FF]">
         <form action="" className="flex  items-center  justify-center flex-wrap-reverse h-full gap-2">
         <h4 className="font-semibold">Get Our Email Updates</h4>
           <div className="searchContainer flex items-center  bg-[#F2FDFF] rounded-full  md:w-80 w-[80%]">
@@ -68,7 +68,7 @@ function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/join-as-seller" className="hover:text-blue-500 text-sm">
+              <Link to="/seller-login" className="hover:text-blue-500 text-sm">
                 Join As Seller
               </Link>
             </li>

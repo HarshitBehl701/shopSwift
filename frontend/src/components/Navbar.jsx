@@ -1,18 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SearchComponent from "./SearchComponent";
 
 function Navbar({ currentPage }) {
   const [isDropMenuOpen, updateIsDropMenuOpen] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem("token"));
   const handleMenuToggle = () =>
     isDropMenuOpen ? updateIsDropMenuOpen(false) : updateIsDropMenuOpen(true);
-  const menuOptions = [
+  const baseMenuOptions = [
     ["Home", "/"],
     ["About", "/about"],
     ["Products", "/products"],
-    ["Login", "/login"],
-    ["Register", "/register"],
   ];
+
+  const menuOptions = token
+    ? baseMenuOptions
+    : [...baseMenuOptions, ["Login", "/login"], ["Register", "/register"]];
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(localStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   return (
     <nav className="bg-white shadow-md   px-8 py-1">
@@ -30,7 +45,9 @@ function Navbar({ currentPage }) {
             Scatch
           </span>
         </Link>
-        { (currentPage.toLowerCase() !== 'products')  &&  <SearchComponent size={"md:w-1/3"} /> }
+        {currentPage.toLowerCase() !== "products" && (
+          <SearchComponent size={"md:w-1/3"} />
+        )}
         <button
           data-collapse-toggle="navbar-default"
           type="button"
@@ -74,7 +91,11 @@ function Navbar({ currentPage }) {
                       ? "text-white  bg-blue-700 md:bg-transparent md:text-blue-700 dark:text-white md:dark:text-blue-500"
                       : "text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white"
                   }`}
-                  aria-current={option[0].toLowerCase() === currentPage.toLowerCase() ? "page" : undefined}
+                  aria-current={
+                    option[0].toLowerCase() === currentPage.toLowerCase()
+                      ? "page"
+                      : undefined
+                  }
                 >
                   {option[0]}
                 </Link>

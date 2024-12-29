@@ -46,7 +46,7 @@ function SellerLoginRegisterForm({ leftPanelObj, rightPanelObj }) {
                   className="w-full px-2 py-1 border-0 border-b-2 border-b-zinc-400 mt-2 outline-none focus:ring-0 focus:border-b-zinc-600"
                   type="text"
                   placeholder="Full  Name"
-                  name="fullName"
+                  name="fullname"
                   onChange={rightPanelObj.handleFormInputFieldsOnChange}
                   value={rightPanelObj.formData.fullName}
                   required
@@ -66,7 +66,7 @@ function SellerLoginRegisterForm({ leftPanelObj, rightPanelObj }) {
                   className="w-full px-2 py-1 border-0 border-b-2 border-b-zinc-400 mt-2 outline-none focus:ring-0 focus:border-b-zinc-600"
                   type="text"
                   placeholder="Brand Name"
-                  name="brandName"
+                  name="brandname"
                   onChange={rightPanelObj.handleFormInputFieldsOnChange}
                   value={rightPanelObj.formData.brandName}
                   required

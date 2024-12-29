@@ -2,8 +2,13 @@ import React, { useState } from "react";
 import UserLoginRegisterForm from "../components/UserLoginRegisterForm";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { handleError, handleSuccess } from "../utils";
+import {loginUser} from  "../api/authUsers";
+import { useNavigate, useNavigation } from "react-router-dom";
 
 function Login() {
+
+  const  navigate = useNavigate();
+
   const [formInputFields, updateFormInputFields] = useState({
     email: "",
     password: "",
@@ -17,13 +22,26 @@ function Login() {
     }));
   };
 
-  const handleFormSubmit = (ev) => {
+  const handleFormSubmit = async (ev) => {
     ev.preventDefault();
     const { email, password } = formInputFields;
 
     if (email == "" || password == "") handleError("All Fields  Are  Required");
     else if (password.length < 8 || password.length > 16)
       handleError("Password Length Must Be Between 8 - 16 Characters");
+    else{
+      try{
+        const response  = await  loginUser(formInputFields,'user');
+        if(response.status) localStorage.setItem('token',response.token);
+        
+        handleSuccess('Successfully  Login  to  your Account');        
+        setTimeout(()=> handleSuccess('Redirecting you  to the home page'),1000);
+        setTimeout(() => navigate('/home'),2000);
+
+      }catch(error){
+        handleError(error.message);
+      }
+    }
   };
 
   const leftPanelObj = {

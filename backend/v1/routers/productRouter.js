@@ -5,9 +5,9 @@ const {createProductValidation} = require('../validations/productValidation');
 const {createProduct , getAllProducts , getProduct} = require('../controllers/productControllers/productController');
 const validate  =  require('../middlewares/validate');
 
-router.post('/products',getAllProducts);
+router.post('/get_products',getAllProducts);
 
-router.post('/product',getProduct);
+router.post('/get_product',getProduct);
 
 router.post('/create-product',isLoggedIn ,validate(createProductValidation),createProduct)
 

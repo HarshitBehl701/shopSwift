@@ -9,8 +9,9 @@ function MultiCardDisplaySection({heading,  cardsData}) {
           return (
             <Cards
               key={index}
-              imageObj={card.imageObj}
-              title={card.title}
+              imageSrc={card.image}
+              imageAlt={`${card.name}-${card.category}`}
+              title={card.name}
               description={card.description}
             />
           );
