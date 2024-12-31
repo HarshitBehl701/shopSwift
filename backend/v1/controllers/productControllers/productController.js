@@ -3,6 +3,8 @@ const productModal = require("../../models/productModal");
 const sellerModal = require("../../models/sellerModal");
 
 module.exports.createProduct = async (req, res) => {
+  console.log(req.body);
+  return res.send('hi');
   try {
     const { name, category, price, discount, description } = req.body;
 
