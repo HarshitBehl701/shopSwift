@@ -7,8 +7,8 @@ function Logout() {
   const navigate = useNavigate();
 
   useEffect(() => {   
-    const token = localStorage.getItem('token');
     localStorage.removeItem('token');
+    localStorage.removeItem('userType');
 
     handleSuccess('Redirecting  you to  the  home page');
 

@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
-const { type } = require("os");
 
 const productSchema = mongoose.Schema({
   name: String,
-  image: Buffer,
+  image: [
+    {type:Buffer}
+  ],
   sellerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "seller",

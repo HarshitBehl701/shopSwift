@@ -74,12 +74,10 @@ module.exports.getUserController = async (req, res) => {
     const user = await userModal
       .findOne({ _id: req.user.id, is_active: 1 })
       .select("name email picture contact address");
-
     if (!user)
       return res
         .status(404)
         .send({ message: "User  Not Found", status: false });
-
     return res
       .status(200)
       .send({ message: "User  Found", status: true, data: user });
@@ -115,28 +113,34 @@ module.exports.updateUserController = async (req, res) => {
 
 module.exports.uploadProfilePicController = async (req,res) => {
   try {
+
     if (!req.file) {
       return res.status(400).json({ error: 'File not provided or invalid!' });
     }
 
     const user =  await userModal.findOne({_id: req.user.id , is_active: 1});
-    const previousImage =  user.picture; //for  deleting previous profile picture from the disk
-    user.picture = req.storedFileName;
-    await user.save();
-    if (previousImage) {
-      const previousImagePath = path.join(__dirname, '../../../../frontend/public/uploads/profilePic', previousImage);
-      fs.unlink(previousImagePath, (err) => {
-        if (err) {
-          console.error('Error deleting the previous file:', err);
-        }
-      });
-    }
-
+    
     if(!user){
       return res.status(500).json({ error: 'Server error while uploading file!' });
     }
 
-    return res.status(200).json({ message: 'File uploaded successfully!', file: req.file });
+    //Removing old image from directory
+    const oldPicturePath  = path.join(__dirname,'/public/uploads/profilePic',user.picture);
+    
+    if(fs.existsSync(oldPicturePath)  && fs.unlinkSync(oldPicturePath)){
+      console.log('file removed')
+    }else{
+      console.log('file not removed');
+    }
+
+    console.log('hello '+ fs.existsSync(oldPicturePath));
+    // console.log(fs.unlinkSync(oldPicturePath));
+    console.log(oldPicturePath);
+
+    user.picture = req.storedFileName
+    await user.save();
+
+    return res.status(200).json({ message: 'File uploaded successfully!' });
   } catch (err) {
     return res.status(500).json({ error: 'Server error while uploading file!' });
   }

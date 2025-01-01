@@ -124,23 +124,22 @@ module.exports.uploadProfilePicController = async (req,res) => {
     }
 
     const user =  await sellerModal.findOne({_id: req.user.id , is_active: 1});
-    const previousImage =  user.brandLogo; //for  deleting previous profile picture from the disk
-    user.brandLogo = req.storedFileName;
-    await user.save();
-    if (previousImage) { //for  deleting previous profile picture from the disk  main  logic
-      const previousImagePath = path.join(__dirname, '../../../../frontend/public/uploads/brandLogo', previousImage);
-      fs.unlink(previousImagePath, (err) => {
-        if (err) {
-          console.error('Error deleting the previous file:', err);
-        }
-      });
-    }
-
     if(!user){
       return res.status(500).json({ error: 'Server error while uploading file!' });
     }
 
-    return res.status(200).json({ message: 'File uploaded successfully!', file: req.file });
+    //removing  old brandlogo
+    const oldPicturePath =  path.join(__dirname,'/uploads/brandLogo',user.brandLogo);
+    if(fs.existsSync(oldPicturePath) && fs.unlinkSync(oldPicturePath)){
+      console.log('file removed'); //remove picture form  directory
+    } else{
+      console.log('file not removed');
+    }
+
+    user.brandLogo = req.storedFileName;
+    await  user.save();
+
+    return res.status(200).json({ message: 'File uploaded successfully!' });
   } catch (err) {
     return res.status(500).json({ error: 'Server error while uploading file!' });
   }

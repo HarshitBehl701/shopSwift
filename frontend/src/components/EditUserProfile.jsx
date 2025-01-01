@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../utils";
 import { useNavigate } from "react-router-dom";
 
-function EditUserProfile({ userData }) {
+function EditUserProfile({ userData}) {
   const navigate = useNavigate();
 
   
@@ -79,6 +79,7 @@ function EditUserProfile({ userData }) {
 
   const handlePicUpload = async (e) => {
     e.preventDefault();
+    console.log('i')
     const file = e.target.files[0];
     const  type   = file.type.split('/')[1].toLowerCase();
     const allowedExtension = ['jpeg','jpg','png'];
@@ -97,15 +98,13 @@ function EditUserProfile({ userData }) {
       }
     }
   };
-
-  const imageSrc = userData.picture || userData.brandLogo;
-
+  const  imageSrc  =  userData.picture || userData.brandLogo;
   return (
     <>
       <h1 className="font-semibold">Edit Profile</h1>
       <div className="imageContainer rounded-full shadow-sm border border-zinc-200 w-[100px] h-[100px] overflow-hidden mx-auto relative">
-        <img src={ (imageSrc == '' || !imageSrc) ? 'https://placehold.co/150/png' : `/uploads/${currentUser == 'user' ? 'profilePic' : 'brandLogo'}/${imageSrc}`} alt="profile pic" />
-        <form encType='multipart/form-data'>
+      <img src={`/uploads/${currentUser  ==  'user'  ? 'profilePic' :  'brandLogo'}/${imageSrc}`} alt=""  className="object-cover  object-top  w-full h-full" />
+        <form encType='multipart/form-data' onSubmit={(ev) => {ev.preventDefault()}} >
           <input
             type="file"
             name="profilePic"

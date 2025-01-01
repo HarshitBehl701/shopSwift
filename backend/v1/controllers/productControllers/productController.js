@@ -3,8 +3,6 @@ const productModal = require("../../models/productModal");
 const sellerModal = require("../../models/sellerModal");
 
 module.exports.createProduct = async (req, res) => {
-  console.log(req.body);
-  return res.send('hi');
   try {
     const { name, category, price, discount, description } = req.body;
 
@@ -13,6 +11,15 @@ module.exports.createProduct = async (req, res) => {
     if (!seller)
       return res.status(400).send({ message: "Access  Denied", status: false });
 
+    console.log(req.files)
+
+    if (!req.files || req.files.length === 0)
+      return res
+        .status(400)
+        .send({ message: "At least one image is required", status: false });
+
+    const imageBuffers = req.files.map((file) => file.buffer);
+
     const product = await productModal.create({
       name,
       sellerId: seller._id,
@@ -20,6 +27,7 @@ module.exports.createProduct = async (req, res) => {
       price,
       discount,
       description,
+      image:  imageBuffers,
     });
 
     if (!product)
