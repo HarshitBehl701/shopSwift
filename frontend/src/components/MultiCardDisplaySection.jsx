@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Cards from "./Cards";
+
 function MultiCardDisplaySection({heading,  cardsData}) {
   return (
     <div className="sliderCards  my-10 py-4 w-full">
@@ -8,11 +9,12 @@ function MultiCardDisplaySection({heading,  cardsData}) {
         {cardsData.map((card, index) => {
           return (
             <Cards
-              key={index}
-              imageSrc={card.image}
+            key={index}
+              imageSrcs={card.image}
               imageAlt={`${card.name}-${card.category}`}
               title={card.name}
               description={card.description}
+              link={`/product/${card._id}`}
             />
           );
         })}

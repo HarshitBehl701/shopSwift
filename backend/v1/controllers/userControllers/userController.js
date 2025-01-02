@@ -113,7 +113,6 @@ module.exports.updateUserController = async (req, res) => {
 
 module.exports.uploadProfilePicController = async (req,res) => {
   try {
-
     if (!req.file) {
       return res.status(400).json({ error: 'File not provided or invalid!' });
     }
@@ -124,20 +123,25 @@ module.exports.uploadProfilePicController = async (req,res) => {
       return res.status(500).json({ error: 'Server error while uploading file!' });
     }
 
-    //Removing old image from directory
-    const oldPicturePath  = path.join(__dirname,'/public/uploads/profilePic',user.picture);
-    
-    if(fs.existsSync(oldPicturePath)  && fs.unlinkSync(oldPicturePath)){
-      console.log('file removed')
-    }else{
-      console.log('file not removed');
+    // Removing old image from directory
+    if (user.picture) {
+      const oldPicturePath = path.resolve(
+        process.cwd(),
+        '../frontend/public/uploads/profilePic',
+        user.picture
+      ).trim();
+      if (fs.existsSync(oldPicturePath)) {
+        try {
+          fs.unlinkSync(oldPicturePath);
+        } catch (unlinkErr) {
+          console.error('Error removing old file:', unlinkErr.message);
+        }
+      } else {
+        console.log('Old file not found, skipping removal.');
+      }
     }
 
-    console.log('hello '+ fs.existsSync(oldPicturePath));
-    // console.log(fs.unlinkSync(oldPicturePath));
-    console.log(oldPicturePath);
-
-    user.picture = req.storedFileName
+    user.picture = req.storedFileName[0];
     await user.save();
 
     return res.status(200).json({ message: 'File uploaded successfully!' });

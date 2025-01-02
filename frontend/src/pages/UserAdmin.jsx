@@ -11,9 +11,12 @@ import { useParams } from "react-router-dom";
 import { fetchUser } from "../api/fetchUser";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../utils";
+import ProductList from "../components/ProductList";
+import ProductDetail from "../components/ProductDetail";
 
 function UserAdmin() {
-  const { action } = useParams();
+  const { action, productId } = useParams();
+
   const currentUser = localStorage.getItem("userType");
 
   const fieldsAsPerUsers = {
@@ -60,7 +63,7 @@ function UserAdmin() {
   }, []);
 
   const requestedPagesAsPerUserType = {
-    common:  {
+    common: {
       profile: <UserProfile userData={user} />,
       edit_profile: <EditUserProfile userData={user} />,
     },
@@ -76,16 +79,49 @@ function UserAdmin() {
         />
       ),
     },
-    seller:{
-      add_product: <AddProduct />
-    }
+    seller: {
+      add_product: <AddProduct />,
+      all_products: (
+        <ProductList title={"all products"} type={"all_products"} />
+      ),
+      live_products: (
+        <ProductList title={"live products"} type={"live_products"} />
+      ),
+    },
+    specialPage: {
+      seller: {
+        product: <ProductDetail productId={productId} />,
+      },
+    },
   };
 
+  let allowedRequestedPages = Object.assign(
+    {},
+    requestedPagesAsPerUserType["common"],
+    requestedPagesAsPerUserType[currentUser]
+  );
 
-  const requestedPage =  Object.assign({},requestedPagesAsPerUserType['common'],requestedPagesAsPerUserType[currentUser]);
+  allowedRequestedPages = productId
+    ? Object.assign({}, allowedRequestedPages, {
+        special: requestedPagesAsPerUserType["specialPage"][currentUser],
+      })
+    : allowedRequestedPages;
 
-  const menuOptions  =  Object.keys(requestedPage);
-  
+  const menuOptions = Object.keys(allowedRequestedPages).filter(
+    (option) => option != "special"
+  );
+
+  let requestPage = allowedRequestedPages["profile"];
+
+  if (action in allowedRequestedPages)
+    requestPage = allowedRequestedPages[action];
+  else if (
+    productId &&
+    "special" in allowedRequestedPages &&
+    action in allowedRequestedPages["special"]
+  )
+    requestPage = allowedRequestedPages["special"][action];
+
   return (
     <>
       <Navbar currentPage={"Profile"} />
@@ -97,19 +133,29 @@ function UserAdmin() {
             <h1 className="text-xl font-semibold">Welcome, User</h1>
             <div className="leftPanelContainer h-[90%]  flex flex-col  justify-between">
               <ul className="text-sm px-2 my-8 font-semibold">
-                {menuOptions.map((option,index) => {
-                  let  menuName = (option.split('_').length  > 1)  ? option.split('_')[0].charAt(0).toUpperCase() + option.split('_')[0].slice(1) + ' ' + option.split('_')[1].charAt(0).toUpperCase() + option.split('_')[1].slice(1)  : option.charAt(0).toUpperCase()  +  option.slice(1);
-                  return <Link  key={index} to={`/${currentUser}/${option}`}>
-                   <li
-                    className={
-                      action.toLowerCase() == option
-                        ? "my-1 bg-blue-600 rounded-md text-white cursor-pointer p-1 pl-2"
-                        : "my-1 hover:bg-blue-600 hover:rounded-md hover:text-white cursor-pointer border-b-2 border-zinc-100 p-1 pl-2"
-                    }
-                  >
-                    {menuName}
-                  </li>
-                </Link>})}
+                {menuOptions.map((option, index) => {
+                  let menuName =
+                    option.split("_").length > 1
+                      ? option.split("_")[0].charAt(0).toUpperCase() +
+                        option.split("_")[0].slice(1) +
+                        " " +
+                        option.split("_")[1].charAt(0).toUpperCase() +
+                        option.split("_")[1].slice(1)
+                      : option.charAt(0).toUpperCase() + option.slice(1);
+                  return (
+                    <Link key={index} to={`/${currentUser}/${option}`}>
+                      <li
+                        className={
+                          action?.toLowerCase() == option
+                            ? "my-1 bg-blue-600 rounded-md text-white cursor-pointer p-1 pl-2"
+                            : "my-1 hover:bg-blue-600 hover:rounded-md hover:text-white cursor-pointer border-b-2 border-zinc-100 p-1 pl-2"
+                        }
+                      >
+                        {menuName}
+                      </li>
+                    </Link>
+                  );
+                })}
               </ul>
               <Link
                 to={"/logout"}
@@ -122,9 +168,7 @@ function UserAdmin() {
 
           {/* Right Section */}
           <div className="rightSection md:w-1/2 w-full border shadow-md rounded-md p-4">
-            {action in requestedPage
-              ? requestedPage[action]
-              : requestedPage["profile"]}
+            {requestPage}
           </div>
         </div>
       </div>

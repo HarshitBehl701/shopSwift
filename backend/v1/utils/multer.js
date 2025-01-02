@@ -4,18 +4,18 @@ const multer = require("multer");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const userType = req.userType;
-    let storagePath = "../frontend/public/uploads/other";
 
     if (userType === "seller") storagePath = "../frontend/public/uploads/brandLogo";
     else if (userType === "user") storagePath = "../frontend/public/uploads/profilePic";
-
+    else if (userType === "seller/product") storagePath = "../frontend/public/uploads/other";
     cb(null, storagePath);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const storedFileName = `${file.fieldname}-${uniqueSuffix}.${file.originalname.split(".").pop()}`;
     cb(null, storedFileName);
-    req.storedFileName = storedFileName;
+    if (!req.storedFileName) req.storedFileName = [];
+    req.storedFileName.push(storedFileName);
   },
 });
 

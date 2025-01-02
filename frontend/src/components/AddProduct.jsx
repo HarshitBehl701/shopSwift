@@ -53,7 +53,7 @@ function AddProduct() {
     else if(files.length == 0) return handleError('Please  Upload Atleast One Picture');
     else{
       try{
-        const response   = await createProduct(localStorage.getItem("token"),localStorage.getItem('userType'),formData);
+        const response   = await createProduct(localStorage.getItem("token"),'seller/product',formData);
         handleSuccess('Product Created Successfully');
         setTimeout(()=>  window.location.reload(),1000);
       }catch(error){

@@ -18,4 +18,9 @@ const createProductValidation = Joi.object({
   description: Joi.string().min(1).required(),
 });
 
-module.exports = {createProductValidation};
+const updateStatusProductValidation  = Joi.object({
+  productId: Joi.string().required(),
+  currentStatus: Joi.string().valid(1,0).required()
+})
+
+module.exports = {createProductValidation,updateStatusProductValidation};

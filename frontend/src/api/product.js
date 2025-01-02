@@ -34,3 +34,41 @@ export const createProduct  =  async  (token,userType,data) => {
         throw error.response ? error.response.data : new Error('Network Error');
     }
 }
+
+export  const getSellerProducts = async  (token,userType,type,data = {}) => {
+    try{
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/product/get_seller_products/${type}`,data,{
+            headers:{
+                Authorization:  `Bearer ${token}`,
+                'X-User-Type': userType,
+            }
+        });
+        return response.data;
+    }catch(error){
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
+}
+
+export const  changeStatusProduct = async  (token,userType,data) => {
+    try{
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/product/change-status-product`,data,{
+            headers:{
+                Authorization:  `Bearer ${token}`,
+                'X-User-Type': userType,
+            }
+        });
+        return response.data;
+    }catch(error){
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
+}
+
+export const getProductDetail   = async (productId) => {
+    try{
+        const response =  await  axios.post(`${process.env.REACT_APP_API_URL}/product/get_product/${productId}`);
+
+        return  response.data;
+    }catch(error){
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
+}

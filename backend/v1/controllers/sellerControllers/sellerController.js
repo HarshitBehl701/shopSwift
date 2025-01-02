@@ -128,15 +128,25 @@ module.exports.uploadProfilePicController = async (req,res) => {
       return res.status(500).json({ error: 'Server error while uploading file!' });
     }
 
-    //removing  old brandlogo
-    const oldPicturePath =  path.join(__dirname,'/uploads/brandLogo',user.brandLogo);
-    if(fs.existsSync(oldPicturePath) && fs.unlinkSync(oldPicturePath)){
-      console.log('file removed'); //remove picture form  directory
-    } else{
-      console.log('file not removed');
+    // Removing old image from directory
+    if (user.brandLogo) {
+      const oldPicturePath = path.resolve(
+        process.cwd(),
+        '../frontend/public/uploads/brandLogo',
+        user.brandLogo
+      ).trim();
+      if (fs.existsSync(oldPicturePath)) {
+        try {
+          fs.unlinkSync(oldPicturePath);
+        } catch (unlinkErr) {
+          console.error('Error removing old file:', unlinkErr.message);
+        }
+      } else {
+        console.log('Old file not found, skipping removal.');
+      }
     }
 
-    user.brandLogo = req.storedFileName;
+    user.brandLogo = req.storedFileName[0];
     await  user.save();
 
     return res.status(200).json({ message: 'File uploaded successfully!' });
