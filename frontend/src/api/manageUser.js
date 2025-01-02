@@ -29,3 +29,31 @@ export const profilePicUpload  = async (token,data,userType) => {
         throw error.response ? error.response.data : new Error('Network Error');
     }
 }
+
+export  const manageCart =  async  (token,userType,data) =>  {
+    try{
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/${userType}/manage-cart`,data,{
+            headers: {
+                Authorization:  `Bearer ${token}`,
+                'X-User-Type': userType,
+            }
+        });
+        return response.data;
+    }catch(error){
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
+}
+
+export const updateUserWhislist = async  (token,userType,data) => {
+    try{
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/${userType}/manage-wishlist`,data,{
+            headers: {
+                Authorization:  `Bearer ${token}`,
+                'X-User-Type': userType,
+            }
+        });
+        return response.data;
+    }catch(error){
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
+}

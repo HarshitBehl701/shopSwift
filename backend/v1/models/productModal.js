@@ -10,8 +10,12 @@ const productSchema = mongoose.Schema({
     ref: "seller",
   },
   category: {
-    type: String,
-    enum:  ['electronics','clothing','shoes','accessories','baby','furniture','home-decor'],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "category"
+  },
+  sub_category: {
+    type:  mongoose.Schema.Types.ObjectId,
+    ref: "subCategory"
   },
   price: {
     type: Number,
@@ -32,10 +36,16 @@ const productSchema = mongoose.Schema({
     min: 0,
     default: 0
   },
-  rating:  {
+  num_of_user_give_rating:  {
     type:  Number,
-    max: 5,
-    min:  0,
+    default: 0
+  },
+  rating_sum:  {
+    type:  Number,
+    default: 0
+  },
+  average_rating:  {
+    type:  Number,
     default: 0
   },
   is_active: {

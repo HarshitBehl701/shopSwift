@@ -5,7 +5,7 @@ import { getSellerProducts } from "../api/product";
 import { Carousel } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-
+import ExpandableDescription  from "../components/ExpandableDescription";
 
 function ProductList({ title  ,type }) {
   const [products, setProduct] = useState([]);
@@ -78,9 +78,7 @@ function ProductList({ title  ,type }) {
                         Description
                       </span>
                       <span>:</span>
-                      <span className="w-[60%]  overflow-hidden  text-ellipsis">
-                        {product.description}
-                      </span>
+                      <ExpandableDescription description={product.description} limit={30} />
                     </li>
                     <li className="flex gap-2  w-full  text-sm my-1  items-center">
                       <span className="inline-block md:w-[20%] w-[30%]  font-semibold">

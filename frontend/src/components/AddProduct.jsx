@@ -7,20 +7,44 @@ import {
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../utils";
 import {createProduct} from '../api/product';
+import {categories}  from '../api/category';
 
 function AddProduct() {
   const [formData, setFormData] = useState({
     name: "",
     category: "",
+    subCategory: "",
     price: "",
     discount: "",
     description: "",
     files: [],
   });
 
-  const  numberOfImagesAllowed = 5;
+  const [categoriesData,setCategoriesData] =  useState([]);
+  const [subCategoriesData,setSubCategoriesData]   = useState([]);
 
-  const  categoriesAllowed =  ['electronics','clothing','shoes','accessories','baby','furniture','home-decor'];
+  useEffect(() => {
+
+    const fetchCategories = async  ()  =>  {
+      try{
+        const response  =  await categories();
+
+        if(!response.status){
+          handleError('Some Error Occured');
+        }else{
+          setCategoriesData(response.data);
+        }
+
+      }catch(error){
+        handleError(error.message);
+      }
+    }
+
+    fetchCategories();
+
+  },[]);
+
+  const  numberOfImagesAllowed = 5;
 
   const handleInputChangeEventForFiles = (ev,index) => {
     const  file  = ev.target.files[0];
@@ -48,18 +72,31 @@ function AddProduct() {
 
   const  handleProductAddFormSubmit = async  (ev) =>{
     ev.preventDefault();
-    const  {name,category,price,discount,description,files}  = formData;
-    if(!name || !category || !price  || !discount || !description) return handleError('All Fields  Are  Mandatory');
+    const  {name,category,subCategory, price,discount,description,files}  = formData;
+    if(!name || !category || !subCategory  || !price  || !discount || !description) return handleError('All Fields  Are  Mandatory');
     else if(files.length == 0) return handleError('Please  Upload Atleast One Picture');
     else{
       try{
         const response   = await createProduct(localStorage.getItem("token"),'seller/product',formData);
-        handleSuccess('Product Created Successfully');
-        setTimeout(()=>  window.location.reload(),1000);
+        if(!response.status){
+          handleError('Some Error  Occured')
+        }else{
+          handleSuccess('Product Created Successfully');
+          setTimeout( () =>  window.location.reload(),4000);
+        }
       }catch(error){
         handleError(error.message);
       }
     }
+  }
+
+  const handleCategoryChangeEvent = async (ev)  => {
+    const {_,value} = ev.target;
+    categoriesData.forEach((category) => {
+      if(category.name  == value){
+        setSubCategoriesData(category.subCategory)
+      }      
+    })
   }
 
   return (
@@ -103,9 +140,13 @@ function AddProduct() {
             className="block my-2 w-full border-zinc-300 outline-none rounded-md"
             required
           />
-          <select name="category" id="category" className="block my-2 w-full border-zinc-300 outline-none rounded-md" onChange={handleInputChangeEvent}>
+          <select name="category" id="category" className="block my-2 w-full border-zinc-300 outline-none rounded-md" onChange={(ev) => {handleInputChangeEvent(ev);  handleCategoryChangeEvent(ev)}}>
             <option value="" defaultValue  hidden>Choose Category</option>
-            {categoriesAllowed.map((category,index)=><option value={category} key={index}>{category.charAt(0).toUpperCase()  + category.slice(1)}</option>)}
+            {categoriesData.map((category,index)=><option value={category.name} key={index}>{category.name.charAt(0).toUpperCase()  + category.name.slice(1)}</option>)}
+          </select>
+          <select name="subCategory" id="subCategory" className="block my-2 w-full border-zinc-300 outline-none rounded-md" onChange={handleInputChangeEvent}>
+            <option value="" defaultValue  hidden>Choose Sub Category</option>
+            {subCategoriesData.map((category,index)=><option value={category.name} key={index}>{category.name.charAt(0).toUpperCase()  + category.name.slice(1)}</option>)}
           </select>
           <input
             type="text"

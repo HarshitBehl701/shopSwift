@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link ,useLocation} from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Cards from "../components/Cards";
 import { handleError, handleSuccess } from "../utils";
 import { ToastContainer } from "react-toastify";
-import { getProducts, getProductDetail } from "../api/product";
+import {
+  getProducts,
+  getProductDetail,
+  updateProductView,
+} from "../api/product";
 import { Carousel } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { manageCart } from "../api/manageUser";
+import ExpandableDescription from "../components/ExpandableDescription";
 
 function Product() {
+  const  location =  useLocation();
+
   const { productId } = useParams();
 
   const [product, setProduct] = useState({
@@ -23,13 +31,14 @@ function Product() {
     discount: "",
     platformFee: "",
     description: "",
-    views: "",
-    rating: "",
+    rating: 0,
+    customer_rate: 0,
   });
 
   const [products, setProducts] = useState([]);
 
-  let is_product_fetch = false;
+  const [currentCartStatus, setCurrentCartStatus] = useState("not_added");
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -44,13 +53,10 @@ function Product() {
       }
     };
 
-    if (!is_product_fetch) {
-      fetchProduct();
-      is_product_fetch = true;
-    }
-  }, []);
+    fetchProduct();
+ 
+  }, [location]);
 
-  let is_products_fetch = false;
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -65,39 +71,116 @@ function Product() {
       }
     };
 
-    if (!is_products_fetch) {
-      fetchProducts();
-      is_products_fetch = true;
+    fetchProducts();
+
+  }, [location]);
+
+  useEffect(() =>{
+    const updateProductView = async () => {
+      try{
+        const response  =  await updateProductView({productId: productId,action:  'add_view'});
+      }catch(error){
+        console.log(error);
+        // console.error('Some Unexpected   Error  Occured')
+      }
     }
-  }, []);
 
-  const [isExpanded, setIsExpanded] = useState(false);
+    updateProductView();
+  },[location]);
 
-  const toggleDescription = () => setIsExpanded(!isExpanded);
+  const handleManageCart = async () => {
+    try {
+      const response = await manageCart(
+        localStorage.getItem("token"),
+        localStorage.getItem("userType"),
+        {
+          productId: product._id,
+          type: currentCartStatus === "not_added" ? "add" : "remove",
+        }
+      );
+
+      if (!response.status) {
+        handleError("Some Unexpected   Error   Occured");
+      } else {
+        setCurrentCartStatus(
+          currentCartStatus === "not_added" ? "added" : "not_added"
+        );
+        handleSuccess(
+          `Successfully  ${
+            currentCartStatus === "not_added"
+              ? "item  added to"
+              : "removed  item  from the"
+          } cart`
+        );
+      }
+    } catch (error) {
+      handleError(error.message);
+    }
+  };
+
+  const [currentWhislistStatus, setCurrentWhislistStatus] =
+    useState("not_added");
+
+  const handleManageWhislist = async () => {
+    try {
+      const response = await manageCart(
+        localStorage.getItem("token"),
+        localStorage.getItem("userType"),
+        {
+          productId: product._id,
+          type: currentCartStatus === "not_added" ? "add" : "remove",
+        }
+      );
+
+      if (!response.status) {
+        handleError("Some Unexpected   Error   Occured");
+      } else {
+        setCurrentWhislistStatus(
+          currentWhislistStatus === "not_added" ? "added" : "not_added"
+        );
+        handleSuccess(
+          `Successfully  ${
+            currentWhislistStatus === "not_added"
+              ? "item  added to"
+              : "removed  item  from the"
+          } whislist`
+        );
+      }
+    } catch (error) {
+      handleError(error.message);
+    }
+  };
 
   return (
     <>
       <Navbar currentPage="Products" />
       <div className="productionInfo my-12  px-8">
+        <h1 className="mb-3  text-xl  font-semibold">Product Details</h1>
         <div className="twoSectionLayout flex   justify-center gap-5 md:flex-nowrap flex-wrap  h-fit py-3">
-          <div className="leftSection md:w-1/2  h-[200px]   rounded-md overflow-hidden shadow-sm w-full">
+          <div className="leftSection md:w-1/3 border h-[200px] rounded-md overflow-hidden shadow-sm w-full">
             <Carousel pauseOnHover>
               {product.image.map((item, index) => (
                 <img
                   key={index}
                   src={`/uploads/other/${item}`}
                   alt={item + index}
-                  className="object-cover border rounded-lg shadow-sm"
+                  className="w-full h-full object-cover object-top"
                 />
               ))}
             </Carousel>
           </div>
           <div className="rightSection w-full  md:py-0  py-4">
             <div className="headerContainer   flex items-center  justify-between   w-1/2  mb-3">
-              <h1 className="text-xl font-semibold">{product.name}</h1>
-              <Link title="Whislist">
-                {" "}
-                <FontAwesomeIcon icon={faHeart} className="text-xl" />
+              <h1 className="font-semibold w-[80%]">{product.name}</h1>
+              <Link title="Whislist" onClick={handleManageWhislist}>
+                <FontAwesomeIcon
+                  icon={faHeart}
+                  className={
+                    currentWhislistStatus == "not_added"
+                      ? "text-xl"
+                      : " text-red-600  text-xl"
+                  }
+                />
               </Link>
             </div>
             <ul className="w-1/2">
@@ -129,28 +212,27 @@ function Product() {
                       ★
                     </span>
                   ))}
+                  <span className="text-sm  text-zinc-400">
+                    ({product.customer_rate})
+                  </span>
                 </span>
               </li>
               <li className="flex items-center justify-between">
                 <span>Description</span>
-                <span>
-                  {isExpanded  || !(product.description.length > 100)
-                    ? product.description
-                    : `${product.description.slice(0, 100)}...`}
-                  {  (product.description.length > 100) && 
-                    <button
-                    onClick={toggleDescription}
-                    className="ml-2 text-blue-500 text-xs hover:underline"
-                  >
-                    {isExpanded ? "Read Less" : "Read More"}
-                  </button>
-                  }
-                </span>
+                <div  className="max-w-[80%]">
+                <ExpandableDescription
+                  description={product.description}
+                  limit={40}
+                />
+                </div>
               </li>
             </ul>
-            <Link to={'/user/add-to-cart'} className="bg-blue-600 text-white  hover:bg-blue-700 text-xs px-2 py-1   rounded-md  shadow-sm mt-4  inline-block">
+            <button
+              className="bg-blue-600 text-white  hover:bg-blue-700 text-xs px-2 py-1   rounded-md  shadow-sm mt-4 "
+              onClick={handleManageCart}
+            >
               Add To Cart
-            </Link>
+            </button>
           </div>
         </div>
       </div>
@@ -166,8 +248,9 @@ function Product() {
                 key={index}
                 imageSrcs={product.image}
                 imageAlt={index}
-                title={product.title}
+                title={product.name}
                 description={product.description}
+                link={`/product/${product.productId}`}
               />
             );
           }

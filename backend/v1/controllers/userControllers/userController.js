@@ -1,5 +1,6 @@
 const db = require("../../config/db");
 const userModal = require("../../models/userModal");
+const  productModal = require("../../models/productModal");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs =  require('fs');
@@ -147,5 +148,86 @@ module.exports.uploadProfilePicController = async (req,res) => {
     return res.status(200).json({ message: 'File uploaded successfully!' });
   } catch (err) {
     return res.status(500).json({ error: 'Server error while uploading file!' });
+  }
+}
+
+module.exports.manageUserCartController =  async (req,res)  =>  {
+  try{
+    const {productId,type} = req.body;
+
+    const user =  await userModal.findOne({_id: req.user._id,is_active: 1});
+
+    if(!user) return res.status(500).send({message: "Some Unexpected  Error  Occured",status:false});
+
+    const product =  await  productModal.findOne({_id: productId,is_active: 1});
+
+    if(!product)   return res.status(404).send({message:'Product Not Found',status:false});
+
+    if(type == 'add'){
+
+      if(user.cart.includes(productId)){
+        return res.status(400).send({message:'Product Already In Cart',status:false});
+      }else{
+        user.cart.push(productId);
+        await user.save();
+      }
+
+    }else  if(type == 'remove'){
+
+      if(!user.cart.includes(productId)){
+        return res.status(400).send({message:'Product Not Found In Cart',status:false});
+      }else{
+        user.cart = user.cart.filter((id) => id != productId);
+        await user.save();
+      }
+
+    }else{
+      return res.status(400).send({message:'Invalid Type',status:false});
+    }
+
+    return res.status(200).send({message:'Cart Updated Successfully',status:true});
+
+  }catch(error){
+    return res.status(500).send({message:'Internal  Server Error',status:false});
+  }
+}
+
+module.exports.manageUserWhislistController = async(req,res)   =>{
+  try{
+    const {productId,type} =  req.body;
+
+    const  user =  await userModal.findOne({_id: req.user._id,is_active: 1});
+
+    if(!user) return res.status(500).send({message: "Some Unexpected  Error  Occured",status:false});
+
+
+    const product = await productModal.findOne({_id: productId,is_active: 1});
+
+    if(!product)
+      return res.status(404).send({message:'Product Not Found',status:false});
+
+    if(type == 'add'){
+      if(user.whislist.includes(productId)){
+        return res.status(400).send({message:'Product Already In Whislist',status:false});
+      }else{
+        user.whislist.push(productId);
+        await user.save();
+      }
+    }else  if(type   == 'remove'){
+      if(!user.whislist.includes(productId)){
+        return res.status(400).send({message:'Product Not Found In Whislist',status:false});
+      }else{
+        user.whislist = user.whislist.filter((id) => id != productId);
+        await user.save();
+      }
+    }else{
+      return  res.status(400).send({message:'Invalid Type',status:false});
+    }
+
+
+    return res.status(200).send({message:'Whislist Updated Successfully',status:true});
+
+  }catch(error){
+    return  res.status(500).send({message: 'Internal Server Error',status:false});
   }
 }

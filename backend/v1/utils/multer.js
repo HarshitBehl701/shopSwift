@@ -5,6 +5,8 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const userType = req.userType;
 
+    storagePath = "../frontend/public/uploads/other";
+
     if (userType === "seller") storagePath = "../frontend/public/uploads/brandLogo";
     else if (userType === "user") storagePath = "../frontend/public/uploads/profilePic";
     else if (userType === "seller/product") storagePath = "../frontend/public/uploads/other";

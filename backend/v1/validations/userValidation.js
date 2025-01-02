@@ -25,4 +25,14 @@ const profilePicSchema = Joi.object({
     })
 })
 
-module.exports  = {registerSchema,loginSchema,updateUserSchema,profilePicSchema};
+const manageCartSchema =  Joi.object({
+    productId: Joi.string().required(),
+    type: Joi.string().valid('add','remove').required()
+})
+
+const manageWhislistSchema = Joi.object({
+    productId: Joi.string().required(),
+    type: Joi.string().valid('add','remove').required()
+})
+
+module.exports  = {registerSchema,loginSchema,updateUserSchema,profilePicSchema,manageCartSchema,manageWhislistSchema};

@@ -14,7 +14,7 @@ function MultiCardDisplaySection({heading,  cardsData}) {
               imageAlt={`${card.name}-${card.category}`}
               title={card.name}
               description={card.description}
-              link={`/product/${card._id}`}
+              link={`/product/${card.productId}`}
             />
           );
         })}

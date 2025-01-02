@@ -30,6 +30,7 @@ function Navbar({ currentPage }) {
   }, []);
 
   return (
+    <>
     <nav className="bg-white shadow-md   px-8 py-1">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 gap-4">
         <Link
@@ -121,6 +122,12 @@ function Navbar({ currentPage }) {
         </div>
       </div>
     </nav>
+
+    <div className="cursor absolute w-[30px] h-[30px] cursor-pointer rounded-full border flex items-center justify-center">
+      <span className="text-xl  font-semibold absolute">&#xB7;</span>
+    </div>
+
+    </>
   );
 }
 

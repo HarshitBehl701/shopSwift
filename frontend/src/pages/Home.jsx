@@ -8,10 +8,12 @@ import { getProducts } from "../api/product";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../utils";
 import Loader from "../components/Loader";
+import  {categories}  from "../api/category";
 
 function Home() {
   const [products, setProducts] = useState([]);
   const [loader, setLoader] = useState(true);
+  const [categoriesData,setCategoriesData]  = useState([]);
 
   let productsFetched = false;
   useEffect(() => {
@@ -31,11 +33,30 @@ function Home() {
     }
   }, []);
 
+  useEffect(()   =>  {
+    const fetchCategories  = async () => {
+      try{
+        const response = await categories();
+
+        if(!response.status){
+          handleError('Some  Error   Occured')
+        }else{
+          setCategoriesData(response.data);
+        }
+      }catch(error){
+        handleError("Categories Not   Found");
+      }
+    }
+
+    fetchCategories();
+
+  },[]);
+
   return (
     <>
       <Navbar currentPage="Home" />
       <HeroSection />
-      <CategorySection />
+      <CategorySection categories={categoriesData} />
 
       <div
         className={

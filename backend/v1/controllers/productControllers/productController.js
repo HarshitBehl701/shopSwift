@@ -1,13 +1,14 @@
 const db = require("../../config/db");
 const productModal = require("../../models/productModal");
 const sellerModal = require("../../models/sellerModal");
+const categoryModal =  require('../../models/categoryModal');
+const subCategoryModal =  require('../../models/subCategoryModal');
 
 module.exports.createProduct = async (req, res) => {
   try {
-    const { name, category, price, discount, description } = req.body;
+    const { name, category , subCategory, price, discount, description } = req.body;
 
     const seller = await sellerModal.findOne({ _id: req.user.id });
-
     if (!seller)
       return res.status(400).send({ message: "Access  Denied", status: false });
 
@@ -16,10 +17,17 @@ module.exports.createProduct = async (req, res) => {
         .status(400)
         .send({ message: "At least one image is required", status: false });
 
+    const categoryExists =  await categoryModal.findOne({name: category,is_active: 1});
+    const  subCategoryExists = await  subCategoryModal.findOne({name: subCategory,is_active:1});
+
+    if((categoryExists &&  subCategoryExists  && categoryExists.subCategory.includes(subCategoryExists._id)) == false)  return res.status(400).send({message: "Category  or Subcategory  is not valid",status:false});
+
+
     const product = await productModal.create({
       name,
       sellerId: seller._id,
-      category,
+      category:  categoryExists._id,
+      sub_category: subCategoryExists._id,
       price,
       discount,
       description,
@@ -30,6 +38,9 @@ module.exports.createProduct = async (req, res) => {
       return res
         .status(500)
         .send({ message: "Internal Server  Error", status: false });
+
+    seller.products.push(product._id);
+    await  seller.save() // saving  to seller object as well
 
     return res
       .status(201)
@@ -46,19 +57,46 @@ module.exports.getAllProducts = async (_, res) => {
     const products = await productModal.find({ is_active: 1 }).populate({
       path: "sellerId",
       select: "brandname",
+    }).populate({
+      path: 'category',
+      select: 'name'
+    }).populate({
+      path: 'sub_category',
+      select: 'name'
     });
 
-    if (!products || products.length == 0)
+    if (!products || products.length == 0){
       return res
         .status(500)
         .send({
           message: "Internal Server Error or Resource Not  Found",
           status: false,
         });
+    }
+      
+
+      const requiredProducts =  products.map((product) =>{
+        return {
+          productId: product._id,
+          name: product.name,
+          image: product.image,
+          brandName: product.sellerId.brandname,
+          category: product.category.name,
+          subCategory: product.sub_category.name,
+          price: product.price,
+          discount: product.discount,
+          platformFee: product.platformFee,
+          description: product.description,
+          views: product.views,
+          rating: product.average_rating,
+          number_of_customer_rate: product.number_of_user_give_rating,
+          status: (product.is_active)  ? 'Active' : 'Inactive', 
+        }
+      })
 
     return res
       .status(200)
-      .send({ message: "Resource  Found", status: true, data: products });
+      .send({ message: "Resource  Found", status: true, data: requiredProducts });
   } catch (err) {
     return res
       .status(500)
@@ -71,11 +109,16 @@ module.exports.getProductDetails  =  async  (req,res)  => {
   try{
     const  {productId} =  req.params;
     
-    const response = await productModal
-    .findOne({ _id: productId, is_active: 1 })
+    const response = await productModal.findOne({ _id: productId, is_active: 1 })
     .populate({
       path: 'sellerId', 
       select: 'brandname brandLogo'
+    }).populate({
+      path: 'category',
+      select: 'name'
+    }).populate({
+      path: 'sub_category',
+      select: 'name'
     });
   
 
@@ -87,13 +130,14 @@ module.exports.getProductDetails  =  async  (req,res)  => {
       image: response.image,
       brandName: response.sellerId.brandname,
       brandLogo: response.sellerId.brandLogo,
-      category: response.category,
+      category: response.category.name,
+      subCategory: response.sub_category.name,
       price: response.price,
       discount: response.discount,
       platformFee: response.platformFee,
       description: response.description,
-      views: response.views,
-      rating: response.rating,
+      rating: response.average_rating,
+      customer_rate: response.num_of_user_give_rating,
     }
 
     return  res.status(200).send({message: "Resource Found",status: true,data: product});
@@ -128,6 +172,12 @@ module.exports.getSellerProducts = async (req, res) => {
       .populate({
         path: "sellerId",
         select: "brandname",
+      }).populate({
+        path: 'category',
+        select: 'name'
+      }).populate({
+        path: 'sub_category',
+        select: 'name'
       });
 
 
@@ -142,13 +192,15 @@ module.exports.getSellerProducts = async (req, res) => {
         name: product.name,
         image: product.image,
         brandName: product.sellerId.brandname,
-        category: product.category,
+        category: product.category.name,
+        subCategory: product.sub_category.name,
         price: product.price,
         discount: product.discount,
         platformFee: product.platformFee,
         description: product.description,
         views: product.views,
-        rating: product.rating,
+        rating: product.average_rating,
+        number_of_customer_rate: product.number_of_user_give_rating,
         status: (product.is_active)  ? 'Active' : 'Inactive', 
       }
     })
@@ -158,6 +210,7 @@ module.exports.getSellerProducts = async (req, res) => {
       .status(200)
       .send({ message: "Resource Found", status: true, data: requiredProducts });
   } catch (err) {
+    console.log(err.message)
     return res
       .status(500)
       .send({ message: "Internal Server Error", status: false });
@@ -190,5 +243,34 @@ module.exports.updateStatusProductController =  async (req,res) => {
 
   }catch(error){
     return  res.status(500).send({message: "Internal Server  Error",status:false});
+  }
+}
+
+module.exports.updateProductViewAndRatingController =  async  (req,res) => {
+  try{
+    const  {productId,action} =  req.body;
+
+    const  product =  await productModal.findOne({_id: productId,is_active:1});
+
+    if(!product) 
+      return res.status(400).send({message: "Product Not Found",status:false});
+
+    if(action  ==  'add_view'){
+      product.views = product.views + 1;
+      await product.save();
+    }else if(action == 'update_rating'){
+      const  {rating}   =  req.body;
+      product.number_of_user_give_rating = product.number_of_user_give_rating + 1;
+      product.rating_sum = product.rating_sum + rating;
+      product.average_rating = product.rating_sum / product.number_of_user_give_rating;
+      await product.save();
+    }else{
+      return res.status(400).send({message: "Invalid Action",status:false});
+    }
+
+    return res.status(200).send({message: "Product Updated Successfully",status:true});
+
+  }catch(error){
+    return  res.status(500).send({message: "Internal Server Error",status:false});
   }
 }

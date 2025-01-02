@@ -3,17 +3,20 @@ import { ToastContainer } from "react-toastify";
 import { handleError,handleSuccess } from "../utils";
 import { getSellerProducts , changeStatusProduct } from "../api/product";
 import { Carousel } from "flowbite-react";
+import ExpandableDescription   from "../components/ExpandableDescription"
 
 function ProductDetail({ productId }) {
   const [product, setProduct] = useState({
     image: ['https://via.placeholder.com/150'],
     name: "",
     category: "",
+    sub_category: "",
     description: "",
     price: "",
     discount: "",
     fee: "",
     rating: "",
+    number_of_customer_rate: "",
     views: "",
     status: "",
   });
@@ -58,20 +61,28 @@ const handleStatusChangeBtn   = async  () => {
 
   return (
     <>
-      <h3 className="font-semibold">Product Detail</h3>
+      <h3 className="font-semibold   mb-3">Product Detail</h3>
       <div className="twoSectionLayout  flex md:flex-row  flex-col gap-4">
-        <div className="leftSection  md:w-1/3 w-full  md:h-[100px] h-[200px] md:my-0 my-3">
-          <Carousel
-            className=""
-            pauseOnHover
-            indicators={false}
-            controls={false}
-            leftControl=" "
-            rightControl=" "
-          >
-          {product.image.map((imgSrc,index) => <img key={index} src={`/uploads/other/${imgSrc}`} alt={index} className="w-full rounded-md   shadow-sm" />)}
-          </Carousel>
-        </div>
+      <div className="leftSection md:w-1/3 w-full md:my-0 my-3 flex flex-col">
+  <Carousel
+    className="h-full rounded-none"
+    pauseOnHover
+    indicators={false}
+    controls={false}
+    leftControl=" "
+    rightControl=" "
+  >
+    {product.image.map((imgSrc, index) => (
+      <img
+        key={index}
+        src={`/uploads/other/${imgSrc}`}
+        alt={`Product ${index}`}
+        className="w-full h-full object-top object-contain"
+      />
+    ))}
+  </Carousel>
+</div>
+
         <div className="rightSection w-full">
           <ul className="text-sm">
             <li className="flex items-center  gap-2">
@@ -93,7 +104,7 @@ const handleStatusChangeBtn   = async  () => {
                 Description
               </span>
               <span>:</span>
-              <span className="inline-block px-2">{product.description}</span>
+              <ExpandableDescription description={product.description} limit={100} />
             </li>
             <li className="flex items-center  gap-2">
               <span className="inline-block min-w-[30%] w-fit  my-1   font-semibold">
@@ -122,6 +133,13 @@ const handleStatusChangeBtn   = async  () => {
               </span>
               <span>:</span>
               <span className="inline-block px-2">{product.rating}</span>
+            </li>
+            <li className="flex items-center  gap-2">
+              <span className="inline-block min-w-[30%] w-fit  my-1   font-semibold">
+                Total  Customer Rate
+              </span>
+              <span>:</span>
+              <span className="inline-block px-2">{product.number_of_customer_rate}</span>
             </li>
             <li className="flex items-center  gap-2">
               <span className="inline-block min-w-[30%] w-fit  my-1   font-semibold">
