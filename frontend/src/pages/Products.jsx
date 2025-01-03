@@ -120,7 +120,7 @@ function Products() {
           ))}
         </div>
 
-        <div className="rightSection productsContainer md:border py-8 px-4 grid rounded-lg md:shadow-md gap-6 md:w-[65%] w-full grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rightSection productsContainer md:border py-8 px-4 grid rounded-lg md:shadow-md gap-6 md:w-[65%] w-full grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product, index) => (
             <Cards
               key={index}

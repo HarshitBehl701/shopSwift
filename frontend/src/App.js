@@ -31,6 +31,7 @@ function App() {
       <Route path="/seller/:action" element={<UserAdmin />} />
       <Route path="/seller/:action/:productId" element={<UserAdmin />} />
       <Route path="/user/:action" element={<UserAdmin />} />
+      <Route path="/user/:action/:productId" element={<UserAdmin />} />
     </Routes>
   );
 }

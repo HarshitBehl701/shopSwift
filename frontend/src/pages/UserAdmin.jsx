@@ -8,11 +8,12 @@ import ManageOrders from "../components/ManageOrders";
 import UserAdminNav from "../components/UserAdminNav";
 import AddProduct from "../components/AddProduct";
 import { useParams } from "react-router-dom";
-import { fetchUser } from "../api/fetchUser";
+import { getUser } from "../api/user";
 import { ToastContainer } from "react-toastify";
-import { handleError, handleSuccess } from "../utils";
+import { handleError } from "../utils";
 import ProductList from "../components/ProductList";
-import ProductDetail from "../components/ProductDetail";
+import ProductDetailSeller from "../components/ProductDetailSeller";
+import ProductDetailUser from "../components/ProductDetailUser";
 
 function UserAdmin() {
   const { action, productId } = useParams();
@@ -46,7 +47,7 @@ function UserAdmin() {
   useEffect(() => {
     async function fetchUserfn() {
       try {
-        const userData = await fetchUser(
+        const userData = await getUser(
           localStorage.getItem("token"),
           localStorage.getItem("userType")
         );
@@ -68,13 +69,12 @@ function UserAdmin() {
       edit_profile: <EditUserProfile userData={user} />,
     },
     user: {
-      cart: <ManageOrders userProductDetail={user.cart} currentPage={"Cart"} />,
+      cart: <ManageOrders currentPage={"Cart"} />,
       orders: (
-        <ManageOrders userProductDetail={user.order} currentPage={"Orders"} />
+        <ManageOrders currentPage={"Orders"} />
       ),
       whislist: (
         <ManageOrders
-          userProductDetail={user.whislist}
           currentPage={"Whislist"}
         />
       ),
@@ -90,8 +90,11 @@ function UserAdmin() {
     },
     specialPage: {
       seller: {
-        product: <ProductDetail productId={productId} />,
+        product: <ProductDetailSeller productId={productId} />,
       },
+      user:{
+        product_detail: <ProductDetailUser productId={productId}  />
+      }
     },
   };
 
@@ -126,7 +129,7 @@ function UserAdmin() {
     <>
       <Navbar currentPage={"Profile"} />
       <div className="mainContainer w-full h-fit px-8 py-16">
-        <UserAdminNav />
+        <UserAdminNav   menuOptionsData={menuOptions} />
         <div className="twoSectionLayout flex h-fit justify-center gap-3 items-stretch">
           {/* Left Section */}
           <div className="leftSection w-1/3 border shadow-md rounded-md md:block hidden p-4">

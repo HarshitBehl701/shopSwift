@@ -4,7 +4,6 @@ import { Navigate } from 'react-router-dom';
 function IsLoggedIn({children}) {
 
     const token    = localStorage.getItem('token');
-  console.log(token);
     if(token) return <Navigate to="/home" />
 
   return children

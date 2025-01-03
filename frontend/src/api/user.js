@@ -1,5 +1,33 @@
 import axios from 'axios';
 
+export const  getUser = async (token,userType) => {
+    try{
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/${userType}/get-user`,{},{
+            headers: {
+                Authorization:  `Bearer ${token}`,
+                'X-User-Type': userType,
+            }
+        });
+        return response.data;
+    }catch(error){
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
+}
+
+export const  getUserCartWhislist = async (token,userType) => {
+    try{
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/${userType}/get-user-cart-whislist`,{},{
+            headers: {
+                Authorization:  `Bearer ${token}`,  
+                'X-User-Type': userType,
+            }
+        });
+        return response.data;
+    }catch(error){
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
+}
+
 export const  updateUser = async (token,data,userType) => {
     try{
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/${userType}/update-user`,{...data},{
@@ -47,6 +75,20 @@ export  const manageCart =  async  (token,userType,data) =>  {
 export const updateUserWhislist = async  (token,userType,data) => {
     try{
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/${userType}/manage-wishlist`,data,{
+            headers: {
+                Authorization:  `Bearer ${token}`,
+                'X-User-Type': userType,
+            }
+        });
+        return response.data;
+    }catch(error){
+        throw error.response ? error.response.data : new Error('Network Error');
+    }
+}
+
+export  const placeOrder = async  (token,userType,data) =>  {
+    try{
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/${userType}/create-order`,data,{
             headers: {
                 Authorization:  `Bearer ${token}`,
                 'X-User-Type': userType,

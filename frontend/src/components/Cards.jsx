@@ -4,6 +4,7 @@ import { Carousel } from "flowbite-react";
 
 function Cards({ imageSrcs, imageAlt, title, description, link }) {
   return (
+    <Link  to={link}>
     <div className="card snap-center shrink-0 border cursor-pointer md:w-52 w-40 md:h-64 h-64 shadow-md flex items-center justify-between flex-col rounded-lg overflow-hidden">
       <Carousel
         pauseOnHover
@@ -18,7 +19,7 @@ function Cards({ imageSrcs, imageAlt, title, description, link }) {
             key={index}
             src={`/uploads/other/${image}`}
             alt={imageAlt}
-            className="h-full w-full object-cover object-top"
+            className="h-full w-full object-cover object-top transition-all  duration-500  hover:scale-105"
           />
         ))}
       </Carousel>
@@ -31,14 +32,14 @@ function Cards({ imageSrcs, imageAlt, title, description, link }) {
             {description}
           </p>
         </div>
-        <Link
-          to={link}
+        <button
           className="text-white rounded-full bg-blue-600 w-8 h-8 font-semibold flex items-center justify-center hover:bg-blue-700"
         >
           {">"}
-        </Link>
+        </button>
       </div>
     </div>
+    </Link>
   );
 }
 

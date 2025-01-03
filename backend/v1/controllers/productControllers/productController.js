@@ -120,12 +120,12 @@ module.exports.getProductDetails  =  async  (req,res)  => {
       path: 'sub_category',
       select: 'name'
     });
-  
 
     if(!response)
-      return  res.status(500).send({message:   "Internal Server  Error",status: false});
+      return  res.status(500).send({message:   "Internal Server Error",status: false});
     
     const product = {
+      productId:  response._id,
       name:  response.name,
       image: response.image,
       brandName: response.sellerId.brandname,
