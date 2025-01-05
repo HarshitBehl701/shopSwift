@@ -7,7 +7,7 @@ function CategorySection({categories}) {
       <h1 className="md:text-2xl  text-xl text-center font-semibold">Shop By Category</h1>
       <div className="categorySlider mt-8 flex items-center justify-center md:gap-14 gap-6 flex-wrap">
         { Array.isArray(categories) && categories.map((category, index) => (
-          <Link to={`/product/${category.name}`} key={index}   className="flex flex-col items-center justify-center">
+          <Link to={`/products/${category.name}`} key={index}   className="flex flex-col items-center justify-center">
             <div className="border md:w-24 md:h-24   w-20  h-20  rounded-full shadow-lg mb-1 overflow-hidden">
               <img
                 src={`/uploads/other/${category.image}`}

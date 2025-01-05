@@ -4,24 +4,7 @@ import { Link } from "react-router-dom";
 function Footer() {
   return (
     <>
-      <div className="getEmailUpdates  w-full md:h-16 h-fit py-2 px-3 bg-[#B0D7FF]">
-        <form action="" className="flex  items-center  justify-center flex-wrap-reverse h-full gap-2">
-        <h4 className="font-semibold">Get Our Email Updates</h4>
-          <div className="searchContainer flex items-center  bg-[#F2FDFF] rounded-full  md:w-80 w-[80%]">
-            <input
-              type="email"
-              placeholder="Enter your  email..."
-              className="bg-transparent border-none outline-none w-full pl-4 pr-2 focus:ring-2 focus:ring-transparent rounded-full"
-            />
-
-            <input
-              type="submit"
-              value="Subscribe"
-              className="bg-[#BFD7EA] px-4 py-2 rounded-full cursor-pointer font-semibold"
-            />
-          </div>
-        </form>
-      </div>
+      <div className="getEmailUpdates  w-full py-1   px-3 bg-slate-100"></div>
       <footer className="w-full h-fit bg-[#2D3142]">
         <div className="upperSection text-white flex flex-wrap  gap-4 pt-12 pb-8 md:px-20 px-8 justify-between  w-full ">
           <ul className="md:w-1/6 w-full">
@@ -60,11 +43,6 @@ function Footer() {
             <li>
               <Link to="/faq" className="hover:text-blue-500 text-sm">
                 FAQ
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact" className="hover:text-blue-500 text-sm">
-                Contact
               </Link>
             </li>
             <li className={(localStorage.getItem('token')) ? 'hidden'  : ''}>

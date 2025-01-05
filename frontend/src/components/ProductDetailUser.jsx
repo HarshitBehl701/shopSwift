@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Carousel, Toast } from "flowbite-react";
-import { useLocation } from "react-router-dom";
+import { useLocation ,useNavigate } from "react-router-dom";
 import { getProductDetail } from "../api/product";
+import { getUserCartWhislist,manageCart } from "../api/user";
 import { handleError, handleSuccess } from "../utils";
 import { ToastContainer } from "react-toastify";
-import { placeOrder } from "../api/user";
+import { placeOrder } from "../api/order";
+import  ExpandableDescription  from "../components/ExpandableDescription";
 
 function ProductDetailUser({ productId }) {
   const location = useLocation();
+  const navigate  =  useNavigate();
 
   const [productData, setProductData] = useState({
     name: "",
@@ -22,6 +25,8 @@ function ProductDetailUser({ productId }) {
     rating: 0,
     customer_rate: 0,
   });
+
+  const [userCart,setUserCart] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -40,6 +45,27 @@ function ProductDetailUser({ productId }) {
     fetchProduct();
   }, [location]);
 
+  useEffect(() =>  {
+    const  fetchUserCartWhislist = async () => {
+      try{
+        const response  =  await getUserCartWhislist(localStorage.getItem('token'),localStorage.getItem('userType'));
+
+        if(!response.status){
+          handleError('Some Unexpected  Error Occured')
+        }else{
+          const cartItemsId = response.data.cart.map((item) => item._id);
+          setUserCart(cartItemsId);
+        }
+        
+      }catch(error){
+        handleError(error.message);
+      }
+    } 
+
+    fetchUserCartWhislist()
+
+  },[productData]);
+
   const  handlePlaceOrder =  async  () =>  {
     try{
       const response  = await placeOrder(localStorage.getItem('token'),localStorage.getItem('userType'),{productId: productId  , quantity: 1});
@@ -48,13 +74,33 @@ function ProductDetailUser({ productId }) {
         handleError('Some  Unexpected  Error  Occured');
       }else{
         handleSuccess('Order  Placed  Successfully');
-        setTimeout(() =>  window.location.reload(),2000);
+        setTimeout(() => navigate('/user/orders'),2000);
       }
 
     }catch(error){
       handleError(error.message);
     }
   }
+
+  const  handleAddToCart = async  () => {
+    try{
+      const response = await  manageCart(localStorage.getItem('token'),localStorage.getItem('userType'),{
+        productId: productId,
+        type: "add",
+      });
+
+      if(!response.status){
+        handleError('Some  Unexpected  Error  Occured');
+      }else{
+        handleSuccess('Added  To   Cart Successfully');
+        setTimeout(() => navigate('/user/orders'),2000);
+      }
+
+    }catch(error){
+      handleError(error.message);
+    }
+  }
+
 
   return (
     <>
@@ -91,6 +137,16 @@ function ProductDetailUser({ productId }) {
               <span>{productData.name}</span>
             </li>
             <li className="flex justify-between">
+              <span className="font-medium text-gray-600">Brand  Name</span>
+              <span>{productData.brandName}</span>
+            </li>
+            <li className="flex justify-between">
+              <span className="font-medium text-gray-600">Description</span>
+              <span  className="w-[70%]">
+                <ExpandableDescription description={productData.description} limit={27} />
+              </span>
+            </li>
+            <li className="flex justify-between">
               <span className="font-medium text-gray-600">Price</span>
               <span>₹{productData.price}</span>
             </li>
@@ -122,8 +178,8 @@ function ProductDetailUser({ productId }) {
             </li>
           </ul>
           <div className="btnCont flex justify-end">
-            <button className="text-xs  px-2 py-1 rounded-md  bg-blue-600  hover:bg-blue-700   text-white  font-semibold mt-4" onClick={handlePlaceOrder}>
-              Buy Now
+            <button className="text-xs  px-2 py-1 rounded-md  bg-blue-600  hover:bg-blue-700   text-white  font-semibold mt-4" onClick={(userCart.includes(productData.productId)  ? handlePlaceOrder :   handleAddToCart)}>
+              {(userCart.includes(productData.productId)  ? 'Buy Now' :   'Add To Cart')}
             </button>
           </div>
         </div>

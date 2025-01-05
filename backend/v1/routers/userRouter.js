@@ -1,6 +1,6 @@
 const express  = require('express');
 const router =  express.Router();
-const { registerController , loginController , getUserController,updateUserController ,uploadProfilePicController ,manageUserCartController,manageUserWhislistController,getUserCartAndWhislistController,createUserOrderController} = require("../controllers/userControllers/userController");
+const { registerController , loginController , getUserController,updateUserController ,uploadProfilePicController ,manageUserCartController,manageUserWhislistController,getUserCartAndWhislistController} = require("../controllers/userControllers/userController");
 const {registerSchema, loginSchema , updateUserSchema , profilePicSchema,manageCartSchema,manageWhislistSchema}  = require('../validations/userValidation');
 const {createOrderSchema}  = require('../validations/orderValidation');
 const validate = require('../middlewares/validate');
@@ -18,8 +18,6 @@ router.post('/get-user-cart-whislist',isLoggedIn,getUserCartAndWhislistControlle
 router.post('/manage-cart',isLoggedIn,validate(manageCartSchema),manageUserCartController);
 
 router.post('/manage-wishlist',isLoggedIn,validate(manageWhislistSchema),manageUserWhislistController);
-
-router.post('/create-order',isLoggedIn,validate(createOrderSchema),createUserOrderController);
 
 router.post('/update-user', isLoggedIn , validate(updateUserSchema) ,updateUserController);
 

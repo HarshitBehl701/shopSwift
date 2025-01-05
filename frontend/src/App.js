@@ -7,10 +7,10 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Products from "./pages/Products";
 import Product from "./pages/Product";
-import ContactUs from "./pages/ContactUs";
 import SellerLogin from "./pages/SellerLogin";
 import SellerRegistration from "./pages/SellerRegistration";
 import UserAdmin from "./pages/UserAdmin";
+import FAQ from "./pages/FAQ";
 import Logout from "./components/Logout";
 import  IsLoggedIn from "./components/IsLoggedIn";
 
@@ -21,9 +21,9 @@ function App() {
       <Route path="/logout" element={<Logout />} />
       <Route path="/home" element={<Home />} />
       <Route path="/about" element={<About />} />
-      <Route path="/products" element={<Products />} />
+      <Route path="/faq" element={<FAQ />} />
+      <Route path="/products/:queryParameter1?/:queryParameter2?" element={<Products />} />
       <Route path="/product/:productId" element={<Product />} />
-      <Route path="/contact" element={<ContactUs />} />
       <Route path="/login" element={<IsLoggedIn><Login /></IsLoggedIn>} />
       <Route path="/seller-login" element={<IsLoggedIn><SellerLogin /></IsLoggedIn>} />
       <Route path="/register" element={<IsLoggedIn><Register /></IsLoggedIn>} />
@@ -31,7 +31,7 @@ function App() {
       <Route path="/seller/:action" element={<UserAdmin />} />
       <Route path="/seller/:action/:productId" element={<UserAdmin />} />
       <Route path="/user/:action" element={<UserAdmin />} />
-      <Route path="/user/:action/:productId" element={<UserAdmin />} />
+      <Route path="/user/:action/:productId_or_orderId" element={<UserAdmin />} />
     </Routes>
   );
 }

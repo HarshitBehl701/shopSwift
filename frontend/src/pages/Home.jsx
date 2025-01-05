@@ -20,7 +20,7 @@ function Home() {
     async function fetchProducts() {
       try {
         const data = await getProducts();
-        setProducts(data.data);
+        setProducts(data.data.reverse());
         setLoader(false);
       } catch (err) {
         handleError(err.message);

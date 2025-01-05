@@ -4,44 +4,39 @@ import Footer from "../components/Footer";
 import SearchComponent from "../components/SearchComponent";
 import Cards from "../components/Cards";
 import DropDownOption from "../components/DropDownOption";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { handleError, handleSuccess } from "../utils";
+import { handleError } from "../utils";
 import { getProducts } from "../api/product";
 import { categories } from "../api/category";
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
+  const {queryParameter1,queryParameter2} = useParams();
+  const location = useLocation();
 
-  const discounts = ["25", "30", "45", "50", "70", "80"];
-
-  const otherCategories = [
-    {
-      name: "Newly  Added Products",
-      link: "/",
-    },
-    {
-      name: "Top  Trendies",
-      link: "/",
-    },
-    {
-      name: "Best  Decorations",
-      link: "/",
-    },
-  ];
-
+  const discounts = [25, 30, 45, 50, 70, 80];
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await getProducts();
-
         if (!response.status) {
           handleError("Some  Error   Occured");
         } else {
-          setProducts(response.data);
+          let requiredData =  [];
+          const data =  response.data;
+          if(queryParameter1 && queryParameter1.toLowerCase() !== 'discount' && queryParameter1 &&  !queryParameter2){
+            requiredData  =  data.filter((item) => item.category.toLowerCase() == queryParameter1);
+          }else  if(queryParameter1 && queryParameter1.toLowerCase() !== 'discount' && queryParameter1  && queryParameter2){
+            requiredData = data.filter((item)   => (item.category.toLowerCase()  == queryParameter1 && item.subCategory.toLowerCase()  == queryParameter2))
+          }else  if(queryParameter1 && queryParameter1.toLowerCase()  ==  'discount'  && queryParameter2){
+            requiredData = data.filter((item)   => (item.discount/item.price)*100  < queryParameter2);
+          }else{
+            requiredData = data;
+          }
+          setProducts(requiredData);
         }
       } catch (error) {
         handleError(error.message);
@@ -49,14 +44,14 @@ function Products() {
     };
 
     fetchProducts();
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await categories();
         if (!response.status) {
-          handleError("Some  Error   Occured");
+          handleError("Some Error Occured");
         } else {
           setCategoryData(response.data);
         }
@@ -66,7 +61,7 @@ function Products() {
     };
 
     fetchCategories();
-  }, []);
+  }, [location]);
 
   return (
     <>
@@ -98,26 +93,15 @@ function Products() {
               Filter By Discount
             </h2>
             {discounts.map((discount, index) => (
-              <button
+              <Link
                 key={index}
-                className="border rounded-full text-zinc-600   hover:bg-blue-600   hover:text-white hover:border-white text-sm font-semibold px-3 m-2 py-1"
+                to={`/products/discount/${discount}`}
+                className="border  inline-block rounded-full text-zinc-600   hover:bg-blue-600   hover:text-white hover:border-white text-sm font-semibold px-3 m-2 py-1"
               >
                 Flat {discount}% Off
-              </button>
+              </Link>
             ))}
           </div>
-          <br />
-          <br />
-          {otherCategories.map((category, index) => (
-            <Link
-              key={index}
-              to={category.link}
-              className="text-sm   md:block  hidden font-semibold hover:text-blue-600 my-2"
-            >
-              {category.name}{" "}
-              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-            </Link>
-          ))}
         </div>
 
         <div className="rightSection productsContainer md:border py-8 px-4 grid rounded-lg md:shadow-md gap-6 md:w-[65%] w-full grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -131,12 +115,14 @@ function Products() {
               link={`/product/${product.productId}`}
             />
             ))}
+            {Array.isArray(products) && products?.length == 0  &&  <p className="italic">No Products Found...</p>} 
         </div>
 
       </div>
       <br />
       <br />
       <Footer />
+      <ToastContainer  />
     </>
   );
 }

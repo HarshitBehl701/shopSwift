@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import UserProfile from "../components/UserProfile";
 import { Link } from "react-router-dom";
 import EditUserProfile from "../components/EditUserProfile";
+import UserCartWhislistOrderList from "../components/UserCartWhislistOrderList";
 import ManageOrders from "../components/ManageOrders";
 import UserAdminNav from "../components/UserAdminNav";
 import AddProduct from "../components/AddProduct";
@@ -16,7 +17,7 @@ import ProductDetailSeller from "../components/ProductDetailSeller";
 import ProductDetailUser from "../components/ProductDetailUser";
 
 function UserAdmin() {
-  const { action, productId } = useParams();
+  const { action, productId_or_orderId } = useParams();
 
   const currentUser = localStorage.getItem("userType");
 
@@ -69,12 +70,12 @@ function UserAdmin() {
       edit_profile: <EditUserProfile userData={user} />,
     },
     user: {
-      cart: <ManageOrders currentPage={"Cart"} />,
+      cart: <UserCartWhislistOrderList currentPage={"Cart"} />,
       orders: (
-        <ManageOrders currentPage={"Orders"} />
+        <UserCartWhislistOrderList currentPage={"Orders"} />
       ),
       whislist: (
-        <ManageOrders
+        <UserCartWhislistOrderList
           currentPage={"Whislist"}
         />
       ),
@@ -90,10 +91,11 @@ function UserAdmin() {
     },
     specialPage: {
       seller: {
-        product: <ProductDetailSeller productId={productId} />,
+        product: <ProductDetailSeller productId={productId_or_orderId} />,
       },
       user:{
-        product_detail: <ProductDetailUser productId={productId}  />
+        product_detail: <ProductDetailUser productId={productId_or_orderId}  />,
+        order_detail: <ManageOrders orderId={productId_or_orderId}  />
       }
     },
   };
@@ -104,7 +106,7 @@ function UserAdmin() {
     requestedPagesAsPerUserType[currentUser]
   );
 
-  allowedRequestedPages = productId
+  allowedRequestedPages = productId_or_orderId
     ? Object.assign({}, allowedRequestedPages, {
         special: requestedPagesAsPerUserType["specialPage"][currentUser],
       })
@@ -119,7 +121,7 @@ function UserAdmin() {
   if (action in allowedRequestedPages)
     requestPage = allowedRequestedPages[action];
   else if (
-    productId &&
+    productId_or_orderId &&
     "special" in allowedRequestedPages &&
     action in allowedRequestedPages["special"]
   )
