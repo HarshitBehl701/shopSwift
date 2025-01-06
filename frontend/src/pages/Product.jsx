@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Cards from "../components/Cards";
-import { handleError, handleSuccess } from "../utils";
+import { handleError, handleSuccess } from "../utils/toastContainerHelperfn";
 import { ToastContainer } from "react-toastify";
-import {
-  getProducts,
-  getProductDetail,
-  updateProductView,
-} from "../api/product";
 import { Carousel } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { manageCart, updateUserWhislist } from "../api/user";
 import ExpandableDescription from "../components/ExpandableDescription";
-import { getUserCartWhislist } from "../api/user";
+import { fetchAllProducts,fetchProduct,updateProductViewsFn } from "../utils/productHelpers";
+import  {fetchUserCartWhislistData,handleUserCartOrWhislist}  from "../utils/manageUserProfileHelper";
 
 function Product() {
   const location = useLocation();
-
   const { productId } = useParams();
 
   const [product, setProduct] = useState({
@@ -38,173 +32,83 @@ function Product() {
 
   const [products, setProducts] = useState([]);
   const [userCartWhislistData, setUserCartWhislistData] = useState({});
-  const [isCurrentProductAlreadyInCart, setIsCurrentProductAlreadyInCart] =
-    useState(false);
-  const [
-    isCurrentProductAlreadyInWhisList,
-    setIsCurrentProductAlreadyInWhislist,
-  ] = useState(false);
+  const [isCurrentProductAlreadyInCart, setIsCurrentProductAlreadyInCart] = useState(false);
+  const [isCurrentProductAlreadyInWhisList,setIsCurrentProductAlreadyInWhislist] = useState(false);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await getProductDetail(productId);
-        if (response.status) {
-          setProduct(response.data);
-        } else {
-          handleError("Some Unexpected  error occured");
-        }
-      } catch (error) {
-        handleError(error.message);
-      }
-    };
 
-    fetchProduct();
+    const  main = async  () => {
+      
+      //fetching product data
+      const productData = await fetchProduct(productId);
+      setProduct(productData);
+
+      //fetching products data
+      const productsData = await fetchAllProducts();
+      setProducts(productsData);
+
+    }
+
+    main();
+
   }, [location]);
 
+  
   useEffect(() => {
-    const fetchUserCartWhislist = async () => {
-      try {
-        const response = await getUserCartWhislist(
-          localStorage.getItem("token"),
-          localStorage.getItem("userType")
-        );
-        if (response.status) setUserCartWhislistData(response.data);
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    fetchUserCartWhislist();
-  }, [product]);
 
-  useEffect(() => {
-    setIsCurrentProductAlreadyInCart(false);
-    userCartWhislistData.cart?.forEach((item) => {
-      if (item._id == productId) {
-        setIsCurrentProductAlreadyInCart(true);
-      }
-    });
-  }, [product]);
+    const main = async ()  =>{
 
-  useEffect(() => {
-    setIsCurrentProductAlreadyInWhislist(false);
-    userCartWhislistData.whislist?.forEach((item) => {
-      if (item._id == productId) {
-        setIsCurrentProductAlreadyInWhislist(true);
-      }
-    });
-  }, [product]);
+      //fetching  user  Cart and whislist data
+      const userCartWhislistsData = await fetchUserCartWhislistData();
+      setUserCartWhislistData(userCartWhislistsData);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProducts();
-        if (response.status) {
-          setProducts(response.data);
-        } else {
-          handleError("Some Unexpected  error occured");
+      //checks if the current product is already  in the  cart or  not
+      setIsCurrentProductAlreadyInCart(false);
+      userCartWhislistData.cart?.forEach((item) => {
+        if (item._id == productId) {
+          setIsCurrentProductAlreadyInCart(true);
         }
-      } catch (error) {
-        handleError(error.message);
-      }
-    };
+      });
 
-    fetchProducts();
-  }, [location]);
-
-  useEffect(() => {
-    const updateProductViewfn = async () => {
-      try {
-        const response = await updateProductView({
-          productId: productId,
-          action: "add_view",
-        });
-      } catch (error) {
-        // console.error('Some Unexpected   Error  Occured')
-      }
-    };
-
-    updateProductViewfn();
-  }, [product]);
-
-  const handleManageCart = async () => {
-    if (
-      !localStorage.getItem("token") ||
-      (!localStorage.getItem("userType") &&
-        localStorage.getItem("userType") !== "user")
-    ) {
-      handleError("Please Do  Login First");
-    } else {
-      try {
-        const response = await manageCart(
-          localStorage.getItem("token"),
-          localStorage.getItem("userType"),
-          {
-            productId: product.productId,
-            type: isCurrentProductAlreadyInCart ? "remove" : "add",
-          }
-        );
-        if (!response.status) {
-          handleError("Some Unexpected   Error   Occured");
-        } else {
-          setIsCurrentProductAlreadyInCart((prevStatus) =>
-            prevStatus ? "not_added" : "added"
-          );
-          handleSuccess(
-            `Successfully  ${
-              isCurrentProductAlreadyInCart
-                ? "removed  item  from the"
-                : "item  added to"
-            } cart`
-          );
-          setTimeout(() => window.location.reload(), 2000);
+      //checks  if the current product is already in the  whislist or not
+      setIsCurrentProductAlreadyInWhislist(false);
+      userCartWhislistData.whislist?.forEach((item) => {
+        if (item._id == productId) {
+          setIsCurrentProductAlreadyInWhislist(true);
         }
-      } catch (error) {
-        console.log("hi");
-        handleError(error.message);
-      }
+      });
+
+      updateProductViewsFn(productId); //update product  view
+      
     }
-  };
 
-  const handleManageWhislist = async () => {
-    if (
-      !localStorage.getItem("token") ||
-      (!localStorage.getItem("userType") &&
-        localStorage.getItem("userType") !== "user")
-    ) {
-      handleError("Please Do  Login First");
-    } else {
-      try {
-        const response = await updateUserWhislist(
-          localStorage.getItem("token"),
-          localStorage.getItem("userType"),
-          {
-            productId: productId,
-            type:
-              isCurrentProductAlreadyInWhisList === false ? "add" : "remove",
-          }
-        );
+    main();
 
-        if (!response.status) {
-          handleError("Some Unexpected   Error   Occured");
-        } else {
-          setIsCurrentProductAlreadyInWhislist((prevStatus) =>
-            prevStatus === "not_added" ? "added" : "not_added"
-          );
-          handleSuccess(
-            `Successfully  ${
-              isCurrentProductAlreadyInWhisList === false
-                ? "item  added to"
-                : "removed  item  from the"
-            } whislist`
-          );
-          setTimeout(() => window.location.reload(), 2000);
-        }
-      } catch (error) {
-        handleError(error.message);
-      }
+  }, [product]);
+
+  const handleManageCart   = async ()   => {
+    const response  =  await handleUserCartOrWhislist('cart',isCurrentProductAlreadyInCart,setIsCurrentProductAlreadyInCart,productId);
+
+    if(!response?.status)
+      handleError(response?.message);
+    else{
+      handleSuccess('Successfully Updated  Your Cart');
+      setTimeout(() => window.location.reload(), 2000);
     }
-  };
+    
+  }
+
+
+  const handleManageWhislist =  async  ()  =>{
+    const response  =  await  handleUserCartOrWhislist('whislist',isCurrentProductAlreadyInWhisList,setIsCurrentProductAlreadyInWhislist,productId);
+
+    if(!response?.status)
+      handleError(response?.message);
+    else{
+      handleSuccess('Successfully Updated  Your Whislist');
+      setTimeout(() => window.location.reload(), 2000);
+    }
+  }
 
   return (
     <>

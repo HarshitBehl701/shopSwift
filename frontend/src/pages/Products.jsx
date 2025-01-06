@@ -5,62 +5,31 @@ import SearchComponent from "../components/SearchComponent";
 import Cards from "../components/Cards";
 import DropDownOption from "../components/DropDownOption";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { handleError } from "../utils";
-import { getProducts } from "../api/product";
-import { categories } from "../api/category";
+import { filterAllProducts } from "../utils/productHelpers";
+import { fetchAllCategories } from "../utils/categoryHelpers";
 
 function Products() {
   const [products, setProducts] = useState([]);
-  const [categoryData, setCategoryData] = useState([]);
+  const [categoriesData, setCategoriesData] = useState([]);
   const {queryParameter1,queryParameter2} = useParams();
   const location = useLocation();
 
   const discounts = [25, 30, 45, 50, 70, 80];
   
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProducts();
-        if (!response.status) {
-          handleError("Some  Error   Occured");
-        } else {
-          let requiredData =  [];
-          const data =  response.data;
-          if(queryParameter1 && queryParameter1.toLowerCase() !== 'discount' && queryParameter1 &&  !queryParameter2){
-            requiredData  =  data.filter((item) => item.category.toLowerCase() == queryParameter1);
-          }else  if(queryParameter1 && queryParameter1.toLowerCase() !== 'discount' && queryParameter1  && queryParameter2){
-            requiredData = data.filter((item)   => (item.category.toLowerCase()  == queryParameter1 && item.subCategory.toLowerCase()  == queryParameter2))
-          }else  if(queryParameter1 && queryParameter1.toLowerCase()  ==  'discount'  && queryParameter2){
-            requiredData = data.filter((item)   => (item.discount/item.price)*100  < queryParameter2);
-          }else{
-            requiredData = data;
-          }
-          setProducts(requiredData);
-        }
-      } catch (error) {
-        handleError(error.message);
-      }
-    };
 
-    fetchProducts();
-  }, [location]);
+    const main = async ()  => {
+  
+      //fetching products for products page
+      const productsData = await filterAllProducts(queryParameter1,queryParameter2);
+      setProducts(productsData);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await categories();
-        if (!response.status) {
-          handleError("Some Error Occured");
-        } else {
-          setCategoryData(response.data);
-        }
-      } catch (error) {
-        handleError(error.message);
-      }
-    };
+      //fetching categories for products page
+      const categoriesData = await  fetchAllCategories();
+      setCategoriesData(categoriesData);
+    } 
 
-    fetchCategories();
+    main();
   }, [location]);
 
   return (
@@ -79,7 +48,7 @@ function Products() {
             <h2 className="font-semibold text-xl text-center mb-6">
               Shop By Category
             </h2>
-            {categoryData.map((category, index) => (
+            {categoriesData.map((category, index) => (
               <DropDownOption
                 key={index}
                 mainData={category}
@@ -122,7 +91,6 @@ function Products() {
       <br />
       <br />
       <Footer />
-      <ToastContainer  />
     </>
   );
 }

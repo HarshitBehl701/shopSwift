@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { handleSuccess, handleError } from '../utils';
+import { handleSuccess, handleError } from '../utils/toastContainerHelperfn';
 import { ToastContainer } from 'react-toastify';
 
 function Logout() {

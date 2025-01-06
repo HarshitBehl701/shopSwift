@@ -1,57 +1,62 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faCamera,} from "@fortawesome/free-solid-svg-icons";
-import { updateUser, profilePicUpload } from "../api/user";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer } from "react-toastify";
-import { handleError, handleSuccess } from "../utils";
+import { handleError, handleSuccess } from "../utils/toastContainerHelperfn";
 import { useNavigate } from "react-router-dom";
+import { handlePicUploadFn } from "../utils/commonHelper";
+import { manageUserEditProfilePageData } from "../utils/manageUserProfileHelper";
+import {
+  handleFormInputChangeEvent,
+  handleUpdateProfileFormSubmit,
+} from "../utils/formHandlers";
 
-function EditUserProfile({ userData }) {
+function EditUserProfile() {
   const navigate = useNavigate();
-
-  const currentUser = localStorage.getItem("userType");
-
-  const fieldsAsPerUsers = {
-    user: ["name", "email", "address", "contact"],
-    seller: ["fullname", "email", "address", "contact", "brandname", "gstin"],
-  };
-
-  const currentFieldAsPerUser = fieldsAsPerUsers[currentUser];
-
-  const defaultObj = currentFieldAsPerUser.reduce((acc, curr) => {
-    acc[curr] = "";
-    return acc;
-  }, {});
-
-  const [formData, setFormData] = useState(defaultObj);
+  const [formData, setFormData] = useState({});
+  const [currentUser, setCurrentUser] = useState("");
+  const [currentFieldAsPerUser, setCurrentFieldAsPerUser] = useState([]);
+  const [imageSrc, setImageSrc] = useState("");
 
   useEffect(() => {
-    if (userData) {
-      const newUserData = currentFieldAsPerUser.reduce((acc, curr) => {
-        acc[curr] = userData[curr] || "";
-        return acc;
-      }, {});
-      setFormData(newUserData);
-    }
-  }, [userData]);
+    const main = async () => {
+      const response = await manageUserEditProfilePageData();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value.toString() });
+      if (!response.status) handleError(response.message);
+      else {
+        const data = response.data;
+        setFormData(data.defaultFormObj);
+        setFormData(data.userData);
+        setImageSrc(data.imageSrc);
+        setCurrentFieldAsPerUser(data.currentFieldAsPerUser);
+        setCurrentUser(data.currentUser);
+      }
+    };
+
+    main();
+  }, []);
+
+  const handlePicUpload = async (e) => {
+    const response = await handlePicUploadFn(e);
+
+    if (!response.status) handleError(response.message);
+    else {
+      handleSuccess("Uploaded Profile Photo  Successfully");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
   };
 
+  const handleChange = (e) => handleFormInputChangeEvent(e, setFormData);
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const newData = { ...formData };
-    delete newData.email;
-    newData.contact = newData.contact.toString();
-    console.log(newData);
-    try {
-      const user = await updateUser(
-        localStorage.getItem("token"),
-        newData,
-        currentUser
-      );
+    const response = await handleUpdateProfileFormSubmit(formData);
+
+    if (!response.status) {
+      handleError(response.message);
+    } else {
       handleSuccess("Successfully updated  your profile");
       setTimeout(() => {
         navigate(`/${currentUser}/profile`);
@@ -59,38 +64,9 @@ function EditUserProfile({ userData }) {
       setTimeout(() => {
         window.location.reload();
       }, 2100);
-    } catch (error) {
-      handleError(error.message);
     }
   };
 
-  const handlePicUpload = async (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
-    const type = file.type.split("/")[1].toLowerCase();
-    const allowedExtension = ["jpeg", "jpg", "png"];
-    if (allowedExtension.indexOf(type) == -1)
-      handleError("Please  Upload  A Valid  Image  only : jpg , jpeg, png");
-    else if (file.size > 2097152) handleError("File  Size Must be under 2 MB");
-    else {
-      try {
-        const response = await profilePicUpload(
-          localStorage.getItem("token"),
-          file,
-          currentUser
-        );
-
-        handleSuccess("Uploaded Profile Photo  Successfully");
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } catch (error) {
-        handleError(error.message);
-      }
-    }
-  };
-  const imageSrc = userData.picture || userData.brandLogo;
   return (
     <>
       <h1 className="font-semibold mb-4">Edit Profile</h1>

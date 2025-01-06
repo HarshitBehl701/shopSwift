@@ -1,8 +1,8 @@
 import React , {useState} from "react";
-import { handleError, handleSuccess } from "../utils";
+import { handleError, handleSuccess } from "../utils/toastContainerHelperfn";
 import SellerLoginRegisterForm from "../components/SellerLoginRegisterForm";
-import { loginUser } from "../api/authUsers";
 import { useNavigate } from "react-router-dom";
+import { handleUserSellerLoginRequest,handleFormInputChangeEvent } from "../utils/formHandlers";
 
 function SellerLogin() {
   const navigate =  useNavigate();
@@ -11,35 +11,15 @@ function SellerLogin() {
     password: "",
   });
 
-  const handleFormInputFieldsOnChange = (ev) => {
-    const { name, value } = ev.target;
-    updateFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  const handleFormInputFieldsOnChange = (ev) => handleFormInputChangeEvent(ev,updateFormData);
 
   const handleFormSubmit = async   (ev) => {
-    ev.preventDefault();
-    const { email, password } = formData;
-
-    if (email == "" || password == "") handleError("All Fields  Are  Required");
-    else if (password.length < 8 || password.length > 16)
-      handleError("Password Length Must Be Between 8 - 16 Characters");
+    const  response  = await handleUserSellerLoginRequest(ev,formData,'loginSellerApiRequest','seller');
+    if(!response.status) handleError(response.message);
     else{
-      try{
-        const response =  await  loginUser(formData,'seller');
-        localStorage.setItem('token',response.token);
-        localStorage.setItem('userType','seller');
-        
-        if(response.status)  handleSuccess('Successfully login  to  your account');
-
-        setTimeout(()=>{handleSuccess('Redirecting   you to home  page')},1000);
-
-        setTimeout(()  => {navigate('/home')},2000);
-      }catch(error){
-        handleError(error.message);
-      }
+        handleSuccess('Successfully  Login  to  your Account');        
+        setTimeout(()=> handleSuccess('Redirecting you  to the home page'),1000);
+        setTimeout(() => navigate('/home'),2000);
     }
   };
 

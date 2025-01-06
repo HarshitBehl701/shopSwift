@@ -1,49 +1,29 @@
 import React, { useState } from "react";
 import UserLoginRegisterForm from "../components/UserLoginRegisterForm";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { handleError, handleSuccess } from "../utils";
-import  {registerUser} from "../api/authUsers";
-import  {useNavigate} from "react-router-dom";
+import { handleError, handleSuccess } from "../utils/toastContainerHelperfn";
+import {handleFormInputChangeEvent}  from "../utils/formHandlers";
+import { useNavigate } from "react-router-dom";
+import  {handleRegisterLoginFormSubmitEvent}  from "../utils/formHandlers";
 
 function Register() {
+  const navigate  = useNavigate();  
 
-  const navigate = useNavigate();
-
-
-  const [formInputFields, updateFormInputFields] = useState({
+  const [formData, updateFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
 
-  const handleFormInputFieldsOnChange = (ev) => {
-    const { name, value } = ev.target;
-    updateFormInputFields((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  const handleFormInputs  = (ev)  => handleFormInputChangeEvent(ev,updateFormData);
 
-  const handleFormSubmit = async  (ev) => {
-    ev.preventDefault();
-    const { name, email, password } = formInputFields;
-    if (name == "" || email == "" || password == "")
-      handleError("All Fields  Are  Required");
-    else if (password.length < 8 || password.length > 16)
-      handleError("Password Length Must Be Between 8 - 16 Characters");
-    else{
-      try{
-        const response = await registerUser(formInputFields,'user');
-        if(response.status)
-        {
-          handleSuccess('Successfully Created Account');
-          setTimeout(() => handleSuccess('Redirecting  you to  login  page'),1000);
-          setTimeout(() => navigate('/login'),2000);
-        }
-      }catch(err){
-        handleError(err.message);
-      }
-
+  const  handleFormSubmit = async (ev)  => {
+    const  response = await handleRegisterLoginFormSubmitEvent(ev,formData,'registerUserApiRequest')
+    if(response.status){
+        handleSuccess('Successfully Created Account');
+        setTimeout(() => handleSuccess('Redirecting  you to  login  page'),1000);
+        setTimeout(() => navigate('/login'),2000);    
+    }else{
+        handleError(response.message)
     }
   };
 
@@ -54,10 +34,11 @@ function Register() {
       "Create an account to unlock personalized shopping experiences, exclusive offers, and more.",
   };
 
+
   const rightPanelObj = {
     handleFormSubmit: handleFormSubmit,
-    handleFormInputFieldsOnChange: handleFormInputFieldsOnChange,
-    formInputFields: formInputFields,
+    handleFormInputFieldsOnChange: handleFormInputs,
+    formData: formData,
     linkText: "Already have  an  account?",
     redirectionLink: "/login",
     submitFormBtnTxt: "Register",

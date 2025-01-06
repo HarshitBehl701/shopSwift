@@ -3,7 +3,7 @@ import { Carousel, Toast } from "flowbite-react";
 import { useLocation ,useNavigate } from "react-router-dom";
 import { getProductDetail } from "../api/product";
 import { getUserCartWhislist,manageCart } from "../api/user";
-import { handleError, handleSuccess } from "../utils";
+import { handleError, handleSuccess } from "../utils/toastContainerHelperfn";
 import { ToastContainer } from "react-toastify";
 import { placeOrder } from "../api/order";
 import  ExpandableDescription  from "../components/ExpandableDescription";

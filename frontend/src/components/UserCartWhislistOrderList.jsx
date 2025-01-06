@@ -1,48 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { getUserCartWhislist } from "../api/user";
-import { getOrders } from "../api/order";
+import { Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { handleError } from "../utils";
+import { handleError } from "../utils/toastContainerHelperfn";
 import { Carousel } from "flowbite-react";
 import ExpandableDescription from "./ExpandableDescription";
+import   {fetchUserCartWhislistData,fetchUserOrdersData}   from "../utils/manageUserProfileHelper"
 
 function UserCartWhislistOrderList({currentPage }) {
   const [userCurrentPageListData, setUserCurrentPageListData] = useState([]);
-  const location = useLocation();
   useEffect(() => {
-    const fetchUserCartAndWhislist = async () => {
-      try {
-        const response = await getUserCartWhislist(
-          localStorage.getItem("token"),
-          localStorage.getItem("userType")
-        );
-        if (response.status) {
-          setUserCurrentPageListData(response.data[currentPage.toLowerCase()].reverse());
-        }
-      } catch (error) {
-        handleError(error.message);
+
+    const main = async ()  => {
+      let data = [];
+      let  response =  [];
+      if(currentPage.toLowerCase() == 'orders'){
+        response  = await fetchUserOrdersData();
+        if(!response.status)  handleError(response.message)
+        else  data  = response.data.reverse()
+      }else{
+        response  = await fetchUserCartWhislistData();
+        if(!response.status)  handleError(response.message)
+        else data  = response.data[currentPage.toLowerCase()].reverse()
       }
-    };
 
-    const  fetchUserOrders = async  ()   => {
-      try{
-        const response  = await getOrders(localStorage.getItem('token'),localStorage.getItem('userType'));
-
-        if(!response.status){
-          handleError('Some Unexpected Error   Occured')
-        }else{
-          setUserCurrentPageListData(response.data.reverse());
-        }
-
-      }catch(error){
-        handleError(error.message);
-      }
+      setUserCurrentPageListData(data);
     }
 
-    if(currentPage.toLowerCase() == 'orders') fetchUserOrders();
-    else fetchUserCartAndWhislist()
-  }, [location]);
+    main();
+  }, [currentPage]);
 
   return (
     <>

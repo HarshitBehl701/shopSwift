@@ -133,7 +133,7 @@ function Navbar({ currentPage }) {
                 {isOpen && token && (
                   <ul className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
                     {currentDropdownOptionForCurrentUser.map((option,index)=><Link  key={index} to={`/${currentUser}/${option}`} className="text-sm text-gray-700">
-                      <li className="px-4 py-2 hover:bg-gray-100">{(option.indexOf('_')) ? option.split('_')[0].charAt(0).toUpperCase()  + option.split('_')[0].slice(1) + ' ' + option.split('_')[1].charAt(0).toUpperCase()  + option.split('_')[1].slice(1) :  option.charAt(0).toUpperCase()  + option.slice(1)}</li>
+                      <li className="px-4 py-2 hover:bg-gray-100">{(option.indexOf('_') !== -1) ? option.split('_')[0].charAt(0).toUpperCase()  + option.split('_')[0].slice(1) + ' ' + option.split('_')[1].charAt(0).toUpperCase()  + option.split('_')[1].slice(1) :  option.charAt(0).toUpperCase()  + option.slice(1)}</li>
                     </Link>)}
                     <Link
                       to={`/${currentUser}/profile`}

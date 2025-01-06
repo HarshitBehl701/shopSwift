@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import SellerLoginRegisterForm from '../components/SellerLoginRegisterForm'
-import { handleError, handleSuccess } from "../utils";
-import { registerUser } from '../api/authUsers';
+import { handleError, handleSuccess } from "../utils/toastContainerHelperfn";
 import { useNavigate } from 'react-router-dom';
+import { handleFormInputChangeEvent, handleRegisterLoginFormSubmitEvent } from '../utils/formHandlers';
 
 function SellerRegistration() {
   const navigate   = useNavigate();
@@ -13,31 +13,17 @@ function SellerRegistration() {
         password: "",
     })
 
-    const handleFormInputFieldsOnChange = (ev) => {
-        const { name , value } = ev.target;
-        updateFormData((prevState) => ({
-          ...prevState,
-          [name]: value,
-        }));
-      };
+    const handleFormInputFieldsOnChange = (ev) => handleFormInputChangeEvent(ev,updateFormData);
 
       const handleFormSubmit =   async (ev) => {
-          ev.preventDefault();
-          const { fullname, email, brandname,password } = formData;
-      
-          if (fullname == "" ||  brandname   ==   "" || email == "" || password == "") handleError("All Fields  Are  Required");
-          else if (password.length < 8 || password.length > 16)
-            handleError("Password Length Must Be Between 8 - 16 Characters");
-          else{
-            try{
-              const response   = await registerUser(formData,'seller');
-              if(response.status)  handleSuccess('Successfully Registered  you  as a seller');              
-              setTimeout(()  => {handleSuccess('Redirecting you  to login page')},1000);
-              setTimeout(() => {navigate('/seller-login')},2000);
-
-            }catch(error){
-              handleError(error.message);
-            }
+        
+        const response  = await  handleRegisterLoginFormSubmitEvent(ev,formData,'registerSellerApiRequest')
+          if(response.status){
+              handleSuccess('Successfully Created Account');
+              setTimeout(() => handleSuccess('Redirecting  you to  login  page'),1000);
+              setTimeout(() => navigate('/seller-login'),2000);    
+          }else{
+              handleError(response.message)
           }
         };
 

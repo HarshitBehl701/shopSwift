@@ -1,72 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
-import { profilePicUpload } from "../api/user";
 import { ToastContainer } from "react-toastify";
-import { handleError, handleSuccess } from "../utils";
+import { handleError, handleSuccess } from "../utils/toastContainerHelperfn";
+import  {handlePicUploadFn}   from "../utils/commonHelper";
+import  {manageUserProfilePageData} from "../utils/manageUserProfileHelper"
 
-function UserProfile({ userData }) {
-  const currentUser = localStorage.getItem("userType");
+function UserProfile() {
+  const location = useLocation();
+  const [currentUser,setCurrentUser]  =  useState("");
+  const [imageSrc,setImageSrc]   =   useState("");
+  const [profileFields,setProfileFields] = useState([])
+  const [user,setUser] = useState({});
 
-  const fieldsAsPerUser = {
-    user: ["name", "email", "address", "contact", "picture"],
-    seller: [
-      "fullname",
-      "email",
-      "address",
-      "contact",
-      "brandname",
-      "brandLogo",
-      "gstin",
-    ],
-  };
+  useEffect(()  => {
 
-  const currentFieldAsCurrentUser = fieldsAsPerUser[currentUser];
+    const main =  async () => {
 
-  const defaultObj = currentFieldAsCurrentUser.reduce((acc, curr) => {
-    acc[curr] = "";
-    return acc;
-  }, {});
+      const response = await manageUserProfilePageData(user,setUser);
 
-  const [user, setUser] = useState(defaultObj);
-
-  useEffect(() => {
-    if (userData) {
-      const newUserData = currentFieldAsCurrentUser.reduce((acc, curr) => {
-        acc[curr] = userData[curr] || "";
-        return acc;
-      }, {});
-      setUser(newUserData);
-    }
-  }, [userData]);
-
-  const imageSrc = user.picture || user.brandLogo;
-
-  const handlePicUpload = async (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
-    const type = file.type.split("/")[1].toLowerCase();
-    const allowedExtension = ["jpeg", "jpg", "png"];
-    if (allowedExtension.indexOf(type) == -1)
-      handleError("Please  Upload  A Valid  Image  only : jpg , jpeg, png");
-    else if (file.size > 2097152) handleError("File  Size Must be under 2 MB");
-    else {
-      try {
-        const response = await profilePicUpload(
-          localStorage.getItem("token"),
-          file,
-          currentUser
-        );
-
-        handleSuccess("Uploaded Profile Photo  Successfully");
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } catch (error) {
-        handleError(error.message);
+      if(!response.status)
+      {
+        handleError(response.message)
+      }else{
+        const data  = response.data;
+        setCurrentUser(data.currentUser)
+        setImageSrc(data.imageSrc)
+        setProfileFields(data.currentFieldAsCurrentUser);
+        setUser(data.userData);
       }
+
+    }
+
+    main();
+
+  },[location]);
+  
+  const handlePicUpload = async (e) => {
+    const  response  = await handlePicUploadFn(e);
+    
+    if(!response.status) handleError(response.message)
+    else{
+      handleSuccess(response.message)
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    
     }
   };
 
@@ -121,7 +101,7 @@ function UserProfile({ userData }) {
           <div className="rightSection flex-1 p-4 bg-white rounded-md border border-gray-200 shadow-sm">
             <div className="contentSection mb-4">
               <ul className="space-y-2">
-                {currentFieldAsCurrentUser.map((item, index) => {
+                {Array.isArray(profileFields) && profileFields.length > 0  && profileFields.map((item, index) => {
                   if (item === "picture" || item === "brandLogo") return null;
                   return (
                     <li
@@ -154,7 +134,7 @@ function UserProfile({ userData }) {
             {/* Edit Profile Button */}
             <div className="text-right">
               <Link
-                to={`/${localStorage.getItem("userType")}/edit_profile`}
+                to={`/${currentUser}/edit_profile`}
                 className="inline-block bg-blue-600 text-white py-1 px-3 text-xs font-semibold rounded-md hover:bg-blue-700 transition-all duration-200"
               >
                 Edit Profile

@@ -40,7 +40,7 @@ function UserLoginRegisterForm({leftPanelObj,rightPanelObj}) {
               placeholder="Name"
               name="name"
               onChange={rightPanelObj.handleFormInputFieldsOnChange}
-              value={rightPanelObj.formInputFields.name}
+              value={rightPanelObj.formData.name}
               required
             />}
             <input
@@ -49,7 +49,7 @@ function UserLoginRegisterForm({leftPanelObj,rightPanelObj}) {
               placeholder="Email"
               name="email"
               onChange={rightPanelObj.handleFormInputFieldsOnChange}
-              value={rightPanelObj.formInputFields.email}
+              value={rightPanelObj.formData.email}
               required
             />
             <div className="border-b-2 border-b-zinc-400 mt-2 flex  items-center justify-between">
@@ -59,7 +59,7 @@ function UserLoginRegisterForm({leftPanelObj,rightPanelObj}) {
                 placeholder="Password"
                 name="password"
                 onChange={rightPanelObj.handleFormInputFieldsOnChange}
-                value={rightPanelObj.formInputFields.password}
+                value={rightPanelObj.formData.password}
                 required
               />
               <FontAwesomeIcon

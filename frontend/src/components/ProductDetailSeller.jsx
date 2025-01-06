@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-import { handleError,handleSuccess } from "../utils";
+import { handleError,handleSuccess } from "../utils/toastContainerHelperfn";
 import { getSellerProducts , changeStatusProduct } from "../api/product";
 import { Carousel } from "flowbite-react";
 import ExpandableDescription   from "./ExpandableDescription"

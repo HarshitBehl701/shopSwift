@@ -1,51 +1,31 @@
 import React, { useState } from "react";
 import UserLoginRegisterForm from "../components/UserLoginRegisterForm";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { handleError, handleSuccess } from "../utils";
-import {loginUser} from  "../api/authUsers";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { handleError, handleSuccess } from "../utils/toastContainerHelperfn";
+import { useNavigate } from "react-router-dom";
+import { handleFormInputChangeEvent } from "../utils/formHandlers";
+import { handleUserSellerLoginRequest } from "../utils/formHandlers";
 
 function Login() {
 
   const  navigate = useNavigate();
 
-  const [formInputFields, updateFormInputFields] = useState({
+  const [formData, updateFormData] = useState({
     email: "",
     password: "",
   });
 
-  const handleFormInputFieldsOnChange = (ev) => {
-    const { name, value } = ev.target;
-    updateFormInputFields((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  const handleFormInputFieldsOnChange = (ev) => handleFormInputChangeEvent(ev,updateFormData);
 
   const handleFormSubmit = async (ev) => {
-    ev.preventDefault();
-    const { email, password } = formInputFields;
+    const response  = await handleUserSellerLoginRequest(ev,formData,'loginUserApiRequest','user');
 
-    if (email == "" || password == "") handleError("All Fields  Are  Required");
-    else if (password.length < 8 || password.length > 16)
-      handleError("Password Length Must Be Between 8 - 16 Characters");
+    if(!response.status) handleError(response.message);
     else{
-      try{
-        const response  = await  loginUser(formInputFields,'user');
-        if(response.status) 
-        {
-          localStorage.setItem('token',response.token);
-          localStorage.setItem('userType','user');
-        }
-        
         handleSuccess('Successfully  Login  to  your Account');        
         setTimeout(()=> handleSuccess('Redirecting you  to the home page'),1000);
         setTimeout(() => navigate('/home'),2000);
-      }catch(error){
-        handleError(error.message);
-      }
-    }
-  };
+    }  
+  }
 
   const leftPanelObj = {
     header: 'Join the <span  class="text-blue-600 hover:text-blue-700">Scatch</span> Community!',
@@ -55,7 +35,7 @@ function Login() {
   const rightPanelObj  = {
     handleFormSubmit:handleFormSubmit,
     handleFormInputFieldsOnChange:handleFormInputFieldsOnChange,
-    formInputFields:  formInputFields,
+    formData:  formData,
     linkText:"Don't have  an  account?",
     redirectionLink:"/register",
     submitFormBtnTxt:"Login",

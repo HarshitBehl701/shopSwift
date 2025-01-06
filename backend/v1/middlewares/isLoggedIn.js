@@ -13,7 +13,6 @@ const isLoggedIn  = async (req,res,next) =>{
 
         req.user = verifyToken;
         req.userType = userType;
-        
         next();
     
     }catch(err){

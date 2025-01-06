@@ -120,3 +120,37 @@ export const updateProductRating = async (token, userType, data) => {
     throw error.response ? error.response.data : new Error("Network Error");
   }
 };
+
+export const editProduct = async (token,userType,productId,data) => {
+  try {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("category", data.category);
+      formData.append("subCategory", data.subCategory);
+      formData.append("price", data.price);
+      formData.append("discount", data.discount);
+      formData.append("description", data.description);
+      formData.append("deleteFiles",JSON.stringify(data.deletefiles))
+
+      data.files.forEach((file) => {
+        formData.append("files", file)
+      });
+    
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/product/edit_product/${productId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+          "X-User-Type": userType,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : new Error("Networks Error");
+  }
+}
