@@ -29,7 +29,7 @@ function App() {
       <Route path="/register" element={<IsLoggedIn><Register /></IsLoggedIn>} />
       <Route path="/seller-registration" element={<IsLoggedIn><SellerRegistration /></IsLoggedIn>} />
       <Route path="/seller/:action" element={<UserAdmin />} />
-      <Route path="/seller/:action/:productId" element={<UserAdmin />} />
+      <Route path="/seller/:action/:productId_or_orderId" element={<UserAdmin />} />
       <Route path="/user/:action" element={<UserAdmin />} />
       <Route path="/user/:action/:productId_or_orderId" element={<UserAdmin />} />
     </Routes>

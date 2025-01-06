@@ -4,6 +4,7 @@ import { handleError,handleSuccess } from "../utils";
 import { getSellerProducts , changeStatusProduct } from "../api/product";
 import { Carousel } from "flowbite-react";
 import ExpandableDescription   from "./ExpandableDescription"
+import { Link } from "react-router-dom";
 
 function ProductDetail({ productId }) {
   const [product, setProduct] = useState({
@@ -20,6 +21,8 @@ function ProductDetail({ productId }) {
     views: "",
     status: "",
   });
+
+  const  currentUser = localStorage.getItem('userType');
 
   let is_productFetched = false;
   useEffect(() => {
@@ -61,7 +64,10 @@ const handleStatusChangeBtn   = async  () => {
 
   return (
     <>
-  <h3 className="font-semibold text-xl text-gray-800 mb-4">Product Detail</h3>
+  <div className="header mb-4 flex flex-wrap items-center justify-between">
+  <h3 className="font-semibold text-xl text-gray-800">Product Detail</h3>
+  {currentUser == 'seller' &&   <Link  to={`/seller/edit_product/${productId}`} className="text-xs border px-2  py-1 rounded-md  shadow-sm bg-blue-600 text-white font-semibold hover:bg-blue-700">Edit Product</Link>}
+  </div>
   
   <div className="twoSectionLayout flex flex-col md:flex-row gap-6">
     {/* Left Section: Carousel */}

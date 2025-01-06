@@ -7,7 +7,7 @@ import EditUserProfile from "../components/EditUserProfile";
 import UserCartWhislistOrderList from "../components/UserCartWhislistOrderList";
 import ManageOrders from "../components/ManageOrders";
 import UserAdminNav from "../components/UserAdminNav";
-import AddProduct from "../components/AddProduct";
+import ManageProduct from "../components/ManageProduct";
 import { useParams } from "react-router-dom";
 import { getUser } from "../api/user";
 import { ToastContainer } from "react-toastify";
@@ -18,7 +18,6 @@ import ProductDetailUser from "../components/ProductDetailUser";
 
 function UserAdmin() {
   const { action, productId_or_orderId } = useParams();
-
   const currentUser = localStorage.getItem("userType");
 
   const fieldsAsPerUsers = {
@@ -81,7 +80,7 @@ function UserAdmin() {
       ),
     },
     seller: {
-      add_product: <AddProduct />,
+      add_product: <ManageProduct  action={'add_product'} />,
       all_products: (
         <ProductList title={"all products"} type={"all_products"} />
       ),
@@ -92,6 +91,7 @@ function UserAdmin() {
     specialPage: {
       seller: {
         product: <ProductDetailSeller productId={productId_or_orderId} />,
+        edit_product: <ManageProduct  action={'edit_product'} />,
       },
       user:{
         product_detail: <ProductDetailUser productId={productId_or_orderId}  />,
@@ -124,8 +124,8 @@ function UserAdmin() {
     productId_or_orderId &&
     "special" in allowedRequestedPages &&
     action in allowedRequestedPages["special"]
-  )
-    requestPage = allowedRequestedPages["special"][action];
+  ) requestPage = allowedRequestedPages["special"][action];
+
 
   return (
     <>

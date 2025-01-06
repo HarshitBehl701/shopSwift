@@ -13,6 +13,8 @@ function Navbar({ currentPage }) {
     ["Products", "/products"],
   ];
 
+  const currentUser =  localStorage.getItem("userType");
+
   const menuOptions = token
     ? baseMenuOptions
     : [...baseMenuOptions, ["Login", "/login"], ["Register", "/register"]];
@@ -33,6 +35,13 @@ function Navbar({ currentPage }) {
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
+
+  const profileDropdownOptions  =  {
+    user: ['cart','whislist','orders'],
+    seller:['add_product','all_products','live_products']
+  }
+
+  const currentDropdownOptionForCurrentUser =  profileDropdownOptions[currentUser];
 
   return (
     <>
@@ -123,20 +132,11 @@ function Navbar({ currentPage }) {
                 {/* Dropdown */}
                 {isOpen && token && (
                   <ul className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
-                    <Link to={`/user/cart`} className="text-sm text-gray-700">
-                      <li className="px-4 py-2 hover:bg-gray-100">Cart</li>
-                    </Link>
+                    {currentDropdownOptionForCurrentUser.map((option,index)=><Link  key={index} to={`/${currentUser}/${option}`} className="text-sm text-gray-700">
+                      <li className="px-4 py-2 hover:bg-gray-100">{(option.indexOf('_')) ? option.split('_')[0].charAt(0).toUpperCase()  + option.split('_')[0].slice(1) + ' ' + option.split('_')[1].charAt(0).toUpperCase()  + option.split('_')[1].slice(1) :  option.charAt(0).toUpperCase()  + option.slice(1)}</li>
+                    </Link>)}
                     <Link
-                      to={`/user/wishlist`}
-                      className="text-sm text-gray-700"
-                    >
-                      <li className="px-4 py-2 hover:bg-gray-100">Wishlist</li>
-                    </Link>
-                    <Link to={`/user/orders`} className="text-sm text-gray-700">
-                      <li className="px-4 py-2 hover:bg-gray-100">Orders</li>
-                    </Link>
-                    <Link
-                      to={`/user/profile`}
+                      to={`/${currentUser}/profile`}
                       className="text-sm text-gray-700"
                     >
                       <li className="px-4 py-2 hover:bg-gray-100">Profile</li>

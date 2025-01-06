@@ -8,8 +8,12 @@ import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../utils";
 import { createProduct } from "../api/product";
 import { categories } from "../api/category";
+import { useParams } from "react-router-dom";
 
-function AddProduct() {
+function ManageProduct({action}) {
+
+    const  {productId_or_orderId} =  useParams();
+
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -112,9 +116,10 @@ function AddProduct() {
     });
   };
 
+
   return (
     <>
-      <h1 className="font-semibold mb-4">Add Product</h1>
+      <h1 className="font-semibold mb-4">{action.split('_')[0].chartAt(0).toUpperCase() + action.split('_')[0].slice(1)}</h1>
 
       {/* Image Upload Section */}
       <div className="imageContainer my-4 flex flex-wrap items-center justify-center gap-4">
@@ -251,4 +256,4 @@ function AddProduct() {
   );
 }
 
-export default AddProduct;
+export default ManageProduct;
