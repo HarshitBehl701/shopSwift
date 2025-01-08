@@ -43,7 +43,7 @@ function Login() {
   }
 
   return (
-    <UserLoginRegisterForm leftPanelObj={leftPanelObj}   rightPanelObj={rightPanelObj} />
+    <UserLoginRegisterForm leftPanelObj={leftPanelObj}   rightPanelObj={rightPanelObj}  currentPage="login" />
   );
 }
 

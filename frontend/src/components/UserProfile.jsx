@@ -18,7 +18,7 @@ function UserProfile() {
 
     const main =  async () => {
 
-      const response = await manageUserProfilePageData(user,setUser);
+      const response = await manageUserProfilePageData();
 
       if(!response.status)
       {

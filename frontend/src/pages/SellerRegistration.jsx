@@ -38,12 +38,12 @@ function SellerRegistration() {
         formData: formData,
         handleFormInputFieldsOnChange: handleFormInputFieldsOnChange,
         handleFormSubmit: handleFormSubmit,
-        linkTextPath: '/seller-login',
+        redirectionLink: '/seller-login',
         linkText: 'Already Registered?'
     }
 
   return (
-    <SellerLoginRegisterForm leftPanelObj={leftPanelObj} rightPanelObj={rightPanelObj} />
+    <SellerLoginRegisterForm leftPanelObj={leftPanelObj} rightPanelObj={rightPanelObj} currentPage={'registration'} />
   )
 }
 

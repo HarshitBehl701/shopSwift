@@ -1,4 +1,6 @@
-import { getProducts, getProductDetail,updateProductView } from "../api/product";
+import { getOrders } from "../api/order";
+import { getProducts, getProductDetail,updateProductView ,getSellerProducts, getSellerAllOrders} from "../api/product";
+import  {getLocalStorageVariables} from "../utils/commonHelper"
 
 export const fetchAllProducts = async () => {
   try {
@@ -73,3 +75,44 @@ export const updateProductViewsFn = async (productId) => {
     return { status: false, message: error.message };
   }
 };
+
+//for seller
+export  const fetchAllSellerProducts = async  (type,additionalData=null)   =>{
+    try{
+      const [token,userType] = getLocalStorageVariables('all');
+      const response = await getSellerProducts(token,userType,type,additionalData);
+
+      if(!response.status)
+        return  {status: false,message: response.message};
+
+      return {status: true,message: "Products Fetched Successfully",data: response.data}
+      
+    }catch(error){
+      return {status:false,message: error.message}
+    }
+}
+
+export  const fetchSellerProductDetail = async  (productId) => {
+  try{
+    const response  = await  fetchAllSellerProducts("product_detail",{ productId: productId })
+
+    if(!response.status)
+      return  {status: false,message:response.message};
+
+    return  {status: true,message:"Product Detail Fetched",data:response.data};
+
+  }catch(error){
+    return {status: false,message:error.message};
+  }
+}
+
+export const  fetchSellerAllOrders = async  () =>  {
+  try{
+    const [token,userType] =  getLocalStorageVariables('all')
+    const  response  = await getSellerAllOrders(token,userType);
+
+    return  {status: true,message: "Orders  Fetched  Successfully",data:response.data};
+  }catch(error){
+    return  {status: false,message: error.message}
+  }
+}

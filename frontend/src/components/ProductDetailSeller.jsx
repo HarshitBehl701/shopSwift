@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { handleError,handleSuccess } from "../utils/toastContainerHelperfn";
-import { getSellerProducts , changeStatusProduct } from "../api/product";
 import { Carousel } from "flowbite-react";
 import ExpandableDescription   from "./ExpandableDescription"
 import { Link } from "react-router-dom";
+import  {fetchSellerProductDetail} from "../utils/productHelpers"
+import { getLocalStorageVariables,handleSellerProductActiveAndInactiveStatus } from "../utils/commonHelper";
 
 function ProductDetail({ productId }) {
   const [product, setProduct] = useState({
@@ -22,44 +23,28 @@ function ProductDetail({ productId }) {
     status: "",
   });
 
-  const  currentUser = localStorage.getItem('userType');
+  const currentUser = getLocalStorageVariables('userType');
 
-  let is_productFetched = false;
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await getSellerProducts(
-          localStorage.getItem("token"),
-          localStorage.getItem("userType"),
-          "product_detail",
-          { productId: productId }
-        );
-        setProduct(response.data[0]);
-      } catch (error) {
-        handleError(error.message);
-      }
-    };
+    const main =  async  () => {
+      const response = await fetchSellerProductDetail(productId);
 
-    
-    if (!is_productFetched) {
-        fetchProduct();
-        is_productFetched = true;
+      if(!response.status) handleError(response.message);
+      else setProduct(response.data[0]);
     }
+
+    main();
 }, []);
 
 
 const handleStatusChangeBtn   = async  () => {
-    try{
-        const response  =  await changeStatusProduct(localStorage.getItem('token'),localStorage.getItem('userType'),{productId:productId,currentStatus:(product.status?.toLowerCase() == 'active') ? 1  : 0});
-        if(response.status){
-            setProduct({...product,status:(product.status?.toLowerCase() == 'active') ? 'Inactive'  : 'Active'});
-            handleSuccess('Status Changed Successfully');
-        }else{
-            handleError('Some Unexpected Error Occurred');
-        }
-    }catch(error){
-        handleError(error.message);
-    }
+  const response = await handleSellerProductActiveAndInactiveStatus(productId,product.status);
+
+  if(!response.status) handleError(response.message);
+  else{
+    setProduct({...product,status:(product.status?.toLowerCase() == 'active') ? 'Inactive'  : 'Active'});
+    handleSuccess('Status Changed Successfully');
+  }
 }
 
   return (

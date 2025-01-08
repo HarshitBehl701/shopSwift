@@ -49,6 +49,7 @@ function Register() {
     <UserLoginRegisterForm
     leftPanelObj={leftPanelObj}
     rightPanelObj={rightPanelObj}
+    currentPage="register"
     />
   );
 }

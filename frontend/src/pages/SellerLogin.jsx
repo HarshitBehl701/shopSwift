@@ -36,7 +36,7 @@ function SellerLogin() {
     formData: formData,
     handleFormInputFieldsOnChange: handleFormInputFieldsOnChange,
     handleFormSubmit: handleFormSubmit,
-    linkTextPath: "/seller-registration",
+    redirectionLink: "/seller-registration",
     linkText: "Don't  have account?",
   };
 
@@ -44,6 +44,7 @@ function SellerLogin() {
     <SellerLoginRegisterForm
       leftPanelObj={leftPanelObj}
       rightPanelObj={rightPanelObj}
+      currentPage={'login'}
     />
   );
 }

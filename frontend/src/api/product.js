@@ -60,6 +60,24 @@ export const getSellerProducts = async (token, userType, type, data = {}) => {
   }
 };
 
+export  const  getSellerAllOrders = async  (token,userType) =>  {
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/product/get_seller_orders`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-User-Type": userType,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : new Error("Network Error");
+  }
+}
+
 export const changeStatusProduct = async (token, userType, data) => {
   try {
     const response = await axios.post(

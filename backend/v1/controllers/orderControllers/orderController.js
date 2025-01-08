@@ -1,5 +1,6 @@
 const db = require("../../config/db");
 const userModal = require("../../models/userModal");
+const sellerModal = require("../../models/sellerModal");
 const productModal = require("../../models/productModal");
 const orderModal = require("../../models/orderModal");
 const {formatDate}  = require('../../utils/formatDate');
@@ -82,16 +83,18 @@ module.exports.getUserOrderDetailController = async (req,res) => {
   try{
 
     const {orderId} = req.params;
-
-    const user  =  await userModal.findOne({_id: req.user.id,is_active: 1});
+    const user  = (req.userType  == 'user')   ?   await userModal.findOne({_id: req.user.id,is_active: 1})   : await sellerModal.findOne({_id: req.user.id,is_active: 1});
 
     if(!user)
       return  res.status(404).send({message:  "User Not Found",status:false});
 
-    if(!user.order.includes(orderId))
+    if(req.userType == 'user' && !user.order.includes(orderId))
       return res.status(400).send({message: "Bad  Request",status:false});
 
-    const response  = await  orderModal.findOne({_id:  orderId,customerId:  user._id,is_active: 1}).populate({path: 'productId'});
+
+    const findCondition  =  (req.userType ==  'user') ?  {_id:  orderId,customerId:  user._id,is_active: 1} :  {_id:  orderId,sellerId:  user._id,is_active: 1}
+
+    const response  = await  orderModal.findOne(findCondition).populate({path: 'productId'}).populate({path: 'customerId',select: 'address'});
 
     const order = {
       _id: response._id,
@@ -102,6 +105,7 @@ module.exports.getUserOrderDetailController = async (req,res) => {
       createdAt: formatDate(response.createdAt),
       updatedAt: formatDate(response.updatedAt),
       productDetail: response.productId,
+      userDetail: response.customerId,
     }
 
     if(!response)

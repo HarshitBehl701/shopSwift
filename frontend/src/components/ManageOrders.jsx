@@ -1,37 +1,40 @@
 import React, { useState,useEffect } from 'react'
+import  {Link} from "react-router-dom"
 import {ToastContainer}  from 'react-toastify'
-import {handleError,handleSuccess}  from "../utils/toastContainerHelperfn"
-import {getOrder}  from "../api/order";
+import {handleError}  from "../utils/toastContainerHelperfn"
 import { Carousel } from "flowbite-react";
 import ExpandableDescription from "./ExpandableDescription";
 
-function ManageOrders({orderId}) {
+import  {fetchUserOrderData} from  "../utils/manageUserProfileHelper";
+import { getLocalStorageVariables } from '../utils/commonHelper';
 
+function ManageOrders({orderId}) {
     const [orderDetails,setOrderDetails] = useState({});
+    const   currentUser =  getLocalStorageVariables('userType');
 
     useEffect(()  => {
-        const getOrderDetails = async() => {
-            try{
-                const response  = await getOrder(localStorage.getItem('token'),localStorage.getItem('userType'),orderId);
 
-                if(!response.status)
-                {
-                    handleError('Some  Unexpected  Error Occured')
-                }else{
-                    setOrderDetails(response.data);
-                }
+      const main =   async  ()  => {
+        const response   = await fetchUserOrderData(orderId);
+        if(!response.status)
+          {
+              handleError('Some  Unexpected  Error Occured')
+          }else{
+              setOrderDetails(response.data);
+          }
+      }
 
-            }catch(error){
-                handleError(error.message)
-            }
-        }
-        getOrderDetails();
+      main();
+
     },[]);
 
   return (
     <>
-    <div className="order-details-container p-4 border rounded-lg shadow-sm">
-      <h1 className="text-xl font-semibold mb-4">Order Details</h1>
+    <div className="order-details-container">
+      <div className="header mb-4 flex justify-between  items-center  flex-wrap">
+      <h1 className="text-xl font-semibold">Order Details</h1>
+      {currentUser == 'seller'  &&  <Link  to={`/seller/product/${orderDetails.productDetail?._id}`} className='text-xs rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold px-2 py-1'>View Product</Link>}
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Carousel Section */}
@@ -67,13 +70,17 @@ function ManageOrders({orderId}) {
               <span className="font-semibold text-gray-600 w-1/3">Name:</span>
               <span className="flex-1">{orderDetails.productDetail?.name}</span>
             </li>
-            {orderDetails.productDetail?.description &&  <li className="flex items-start gap-2">
+            {(currentUser  == 'user') && orderDetails.productDetail?.description &&  <li className="flex items-start gap-2">
               <span className="font-semibold text-gray-600 w-1/3">
                 Description:
               </span>
               <span className="flex-1">
                 <ExpandableDescription description={orderDetails.productDetail.description} limit={50} />
               </span>
+            </li>}
+            {(currentUser == 'seller') && <li className="flex items-start gap-2">
+              <span className="font-semibold text-gray-600 w-1/3">Order ID:</span>
+              <span className="flex-1">{orderDetails._id}</span>
             </li>}
             <li className="flex items-start gap-2">
               <span className="font-semibold text-gray-600 w-1/3">Quantity:</span>
@@ -93,6 +100,12 @@ function ManageOrders({orderId}) {
               </span>
               <span className="flex-1">{orderDetails.createdAt}</span>
             </li>
+            {currentUser  == 'seller' &&  (<li className="flex items-start gap-2">
+              <span className="font-semibold text-gray-600 w-1/3">
+                Delivery  Address:
+              </span>
+              <span className="flex-1">{orderDetails.userDetail?.address}</span>
+            </li>)}
           </ul>
         </div>
       </div>

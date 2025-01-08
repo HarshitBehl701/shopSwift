@@ -3,8 +3,10 @@ const productModal = require("../../models/productModal");
 const sellerModal = require("../../models/sellerModal");
 const categoryModal = require("../../models/categoryModal");
 const subCategoryModal = require("../../models/subCategoryModal");
+const orderModal = require("../../models/orderModal");
 const fs = require("fs");
 const path = require("path");
+const {formatDate} =   require('../../utils/formatDate')
 
 module.exports.createProduct = async (req, res) => {
   try {
@@ -340,12 +342,51 @@ module.exports.getSellerProducts = async (req, res) => {
         data: requiredProducts,
       });
   } catch (err) {
-    console.log(err.message);
     return res
       .status(500)
       .send({ message: "Internal Server Error", status: false });
   }
 };
+
+module.exports.getSellerOrders = async (req,res) => {
+  try {
+    //verifying seller   identity
+    const seller = await sellerModal.findOne({
+      _id: req.user.id,
+      is_active: 1,
+    });
+
+    if (!seller)
+      return res.status(400).send({ message: "Access Denied", status: false });
+
+    const requestData = await orderModal.find({sellerId: seller._id}).populate({
+      path: "productId"
+    });
+
+    const orders  =  requestData.map((data)  => ({
+      id: data._id,
+      order_date: formatDate(data.createdAt),
+      quantity: data.quantity,
+      rating: data.rating,
+      status: data.status,
+      amount:  data.amount,
+      product: data.productId
+    }))
+    
+    return res
+      .status(200)
+      .send({
+        message: "Resource Found",
+        status: true,
+        data: orders,
+      });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Internal Server Error", status: false });
+  }
+}
+
 
 module.exports.updateStatusProductController = async (req, res) => {
   try {

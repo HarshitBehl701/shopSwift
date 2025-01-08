@@ -1,45 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import { handleError } from "../utils/toastContainerHelperfn";
-import { getSellerProducts } from "../api/product";
 import { Carousel } from "flowbite-react";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 import ExpandableDescription from "../components/ExpandableDescription";
+import {manageSellerProductsAndOrdersListDataForAdminpage}  from "../utils/manageUserProfileHelper"
+import OrderListing from "./OrderListing";
 
 function ProductList({ title, type }) {
-  const [products, setProduct] = useState([]);
-  const location = useLocation();
+  const [pageData, setPageData] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getSellerProducts(
-          localStorage.getItem("token"),
-          localStorage.getItem("userType"),
-          type
-        );
-        setProduct(response.data);
-      } catch (error) {
-        handleError(error.message);
-        setProduct([]);
+
+    const main = async  () => {
+      const response = await manageSellerProductsAndOrdersListDataForAdminpage(type);
+      if(!response.status){
+        handleError(response.message);
+      }else{
+        setPageData(response.data);
       }
-    };
-    fetchProducts();
-  }, [location]);
+    }
+    main();
+  }, [type]);
 
   return (
     <>
       <h3 className="font-semibold mb-2">
-        {title.charAt(0).toUpperCase() + title.slice(1)}
+        {title}
       </h3>
       <hr className="border-gray-300 mb-4" />
 
       {/* Products List */}
       <ul className="max-h-[500px] overflow-y-auto space-y-4">
-        {Array.isArray(products) && products.length > 0 ? (
-          products.map((product, index) => (
-            <Link to={`/seller/product/${product.productId}`} key={index}>
+        {(type != 'manage_orders' && Array.isArray(pageData) && pageData?.length > 0) && (
+          pageData?.map((product, index) => (
+            <Link to={`/seller/product/${product?.productId}`} key={index}>
               <li className="border-b border-gray-200 pb-4">
                 <div className="twoSection flex flex-col md:flex-row md:gap-4 gap-6">
                   {/* Left Side (Carousel) */}
@@ -52,7 +47,7 @@ function ProductList({ title, type }) {
                       rightControl=" "
                       className="w-[120px] h-[120px] rounded-md shadow-md"
                     >
-                      {product.image.map((image, imageIndex) => (
+                      {product?.image?.map((image, imageIndex) => (
                         <img
                           key={imageIndex}
                           src={`/uploads/other/${image}`}
@@ -71,14 +66,14 @@ function ProductList({ title, type }) {
                           Name
                         </span>
                         <span className="text-gray-500">:</span>
-                        <span className="text-gray-800">{product.name}</span>
+                        <span className="text-gray-800">{product?.name}</span>
                       </li>
                       <li className="flex gap-2 items-center text-sm">
                         <span className="inline-block md:w-[25%] w-[35%] font-medium">
                           Price
                         </span>
                         <span className="text-gray-500">:</span>
-                        <span className="text-green-600">₹{product.price}</span>
+                        <span className="text-green-600">₹{product?.price}</span>
                       </li>
                       <li className="flex gap-2 items-start text-sm">
                         <span className="inline-block md:w-[25%] w-[35%] font-medium">
@@ -86,7 +81,7 @@ function ProductList({ title, type }) {
                         </span>
                         <span className="text-gray-500">:</span>
                         <ExpandableDescription
-                          description={product.description}
+                          description={product?.description}
                           limit={30}
                         />
                       </li>
@@ -97,12 +92,12 @@ function ProductList({ title, type }) {
                         <span className="text-gray-500">:</span>
                         <span
                           className={`${
-                            product.status === "Active"
+                            product?.status === "Active"
                               ? "text-blue-600"
                               : "text-red-600"
                           }`}
                         >
-                          {product.status}
+                          {product?.status}
                         </span>
                       </li>
                     </ul>
@@ -111,11 +106,14 @@ function ProductList({ title, type }) {
               </li>
             </Link>
           ))
-        ) : (
-          <p className="italic text-sm text-gray-500 text-center">
-            No Products Yet
-          </p>
         )}
+
+        {/* For Orders Listing Only*/}
+        {(type == 'manage_orders' && Array.isArray(pageData) && pageData?.length > 0) && (pageData?.map((value,index) =>  <li key={index}   className="border-b border-gray-200 pb-4"> <OrderListing orderData={value} /></li>))}
+
+        {!pageData &&  <p className="italic text-sm text-gray-500 text-center">
+            No Products Yet
+          </p>}
       </ul>
 
       <ToastContainer />

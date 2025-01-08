@@ -10,7 +10,8 @@ import ProductList from "../components/ProductList";
 import ProductDetailSeller from "../components/ProductDetailSeller";
 import ProductDetailUser from "../components/ProductDetailUser";
 import UserProfile from "../components/UserProfile";
-import  {getOrders}  from "../api/order";
+import  {getOrder, getOrders, placeOrder}  from "../api/order";
+import { fetchAllSellerProducts,fetchSellerAllOrders } from "./productHelpers";
 
 export const fetchUserData = async () => {
   const [token, userType] = getLocalStorageVariables("all");
@@ -53,6 +54,20 @@ export const fetchUserOrdersData  = async () => {
       return { status: false, message: "Some Unexpected  Error  Occured" };
 
     return {status: true,message:   "Orders  Found  Successfully",data:response.data};
+  }catch(error){
+    return {status:  false,message:  error.message}
+  }
+}
+
+export  const fetchUserOrderData =   async (orderId)  => {
+  try{
+    const [token, userType] = getLocalStorageVariables("all");
+    const response = await getOrder(token, userType,orderId);
+
+    if (!response.status)
+      return { status: false, message: "Some Unexpected  Error  Occured" };
+
+    return {status: true,message:   "Order  Found  Successfully",data:response.data};
   }catch(error){
     return {status:  false,message:  error.message}
   }
@@ -146,16 +161,20 @@ export const manageUserAdminPageData = async (user,setUser,productId_or_orderId,
     seller: {
       add_product: <ManageProduct action={"add_product"} />,
       all_products: (
-        <ProductList title={"all products"} type={"all_products"} />
+        <ProductList title={"All Products"} type={"all_products"} />
       ),
       live_products: (
-        <ProductList title={"live products"} type={"live_products"} />
+        <ProductList title={"Live Products"} type={"live_products"} />
+      ),
+      manage_orders: (
+        <ProductList title={"Manage Products"} type={"manage_orders"} />
       ),
     },
     specialPage: {
       seller: {
         product: <ProductDetailSeller productId={productId_or_orderId} />,
         edit_product: <ManageProduct action={"edit_product"} />,
+        order_detail: <ManageOrders orderId={productId_or_orderId} />,
       },
       user: {
         product_detail: <ProductDetailUser productId={productId_or_orderId} />,
@@ -195,7 +214,7 @@ export const manageUserAdminPageData = async (user,setUser,productId_or_orderId,
 
 };
 
-export  const manageUserProfilePageData = async (user,setUser) => {
+export  const manageUserProfilePageData = async () => {
   const currentUser = getLocalStorageVariables('userType');
   const userDataResponse  = await  fetchUserData();
 
@@ -261,4 +280,54 @@ export const manageUserEditProfilePageData  = async  () => {
     const imageSrc = userData.picture || userData.brandLogo;
  
     return {status: true, message: "Page Progress Completed Succeessfully",data: {defaultFormObj:defaultFormObj,userData:newUserData,imageSrc: imageSrc,currentFieldAsPerUser:currentFieldAsPerUser,currentUser: currentUser}}  
+}
+
+
+export  const manageUserPlacingOrderOrAddingToCart  = async (action,productId)  =>{
+
+  try{
+
+    const  [token,userType]  = getLocalStorageVariables('all');
+    
+    const  allowedActions  =  {
+      order: placeOrder,
+      cart: manageCart
+    }
+
+    const additionalData = {
+      order: {quantity: 1},
+      cart: {type:  'add'}
+    }
+
+    if(!allowedActions[action])
+      return {status:false,messge:  "Something  went wrong please  try  again later"}
+
+    const  data = {productId:productId,...additionalData[action]};
+
+    const response   = await allowedActions[action](token,userType,data);
+    
+    if(!response.status)
+      return {status:false,messge:  response.message}
+
+    return {status:  true,message: 'successfully completed the  task'};
+
+  }catch(error){
+    return  {status:false,message: error.messge};
+  }
+
+}
+
+export const  manageSellerProductsAndOrdersListDataForAdminpage  =  async  (type)  =>{
+try{
+const response = (type  !==  'manage_orders')  ?  await fetchAllSellerProducts(type) : await fetchSellerAllOrders();
+
+if(!response.status)
+  return  {status:false,message:   response.message};
+else{
+  return {status: true,message: "Resource  Found  Successfully",data: response.data};
+}
+
+}catch(error){
+  return  {status:false,message: error.message}
+}
 }

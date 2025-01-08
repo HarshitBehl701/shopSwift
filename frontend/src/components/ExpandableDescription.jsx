@@ -6,10 +6,10 @@ function ExpandableDescription({description,limit}) {
 
   return (
     <p   className="text-justify">
-      {isExpanded || !(description.length > limit)
+      {isExpanded || !(description?.length > limit)
         ? description
         : `${description.slice(0, limit)}...`}
-      {description.length > limit && (
+      {description?.length > limit && (
         <button
           onClick={toggleDescription}
           className="ml-2 text-blue-500 text-xs hover:underline"

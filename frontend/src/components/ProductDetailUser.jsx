@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Carousel, Toast } from "flowbite-react";
+import { Carousel } from "flowbite-react";
 import { useLocation ,useNavigate } from "react-router-dom";
-import { getProductDetail } from "../api/product";
-import { getUserCartWhislist,manageCart } from "../api/user";
 import { handleError, handleSuccess } from "../utils/toastContainerHelperfn";
 import { ToastContainer } from "react-toastify";
-import { placeOrder } from "../api/order";
 import  ExpandableDescription  from "../components/ExpandableDescription";
+import  {fetchProduct} from "../utils/productHelpers"
+import  {fetchUserCartWhislistData} from "../utils/manageUserProfileHelper"
+import  {manageUserPlacingOrderOrAddingToCart} from "../utils/manageUserProfileHelper"
 
 function ProductDetailUser({ productId }) {
   const location = useLocation();
@@ -29,78 +29,29 @@ function ProductDetailUser({ productId }) {
   const [userCart,setUserCart] = useState([]);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await getProductDetail(productId);
-        if (response.status) {
-          setProductData(response.data);
-        } else {
-          handleError("Some Unexpected  error occured");
-        }
-      } catch (error) {
-        handleError(error.message);
-      }
-    };
 
-    fetchProduct();
+    const main  = async  ()   => {
+      const  productDetail  =  await  fetchProduct(productId);
+      setProductData(productDetail)
+
+      const cartOrWhislistData = await fetchUserCartWhislistData();
+      const cartItemsId = cartOrWhislistData.data.cart.map((item) => item._id);
+      setUserCart(cartItemsId);
+
+    }
+
+    main();
   }, [location]);
 
-  useEffect(() =>  {
-    const  fetchUserCartWhislist = async () => {
-      try{
-        const response  =  await getUserCartWhislist(localStorage.getItem('token'),localStorage.getItem('userType'));
-
-        if(!response.status){
-          handleError('Some Unexpected  Error Occured')
-        }else{
-          const cartItemsId = response.data.cart.map((item) => item._id);
-          setUserCart(cartItemsId);
-        }
-        
-      }catch(error){
-        handleError(error.message);
-      }
-    } 
-
-    fetchUserCartWhislist()
-
-  },[productData]);
-
-  const  handlePlaceOrder =  async  () =>  {
-    try{
-      const response  = await placeOrder(localStorage.getItem('token'),localStorage.getItem('userType'),{productId: productId  , quantity: 1});
-
-      if(!response.status){
-        handleError('Some  Unexpected  Error  Occured');
-      }else{
-        handleSuccess('Order  Placed  Successfully');
-        setTimeout(() => navigate('/user/orders'),2000);
-      }
-
-    }catch(error){
-      handleError(error.message);
+  const managePlaceOrderOrAddToCart =  async (action) => {
+    const response  = await manageUserPlacingOrderOrAddingToCart(action,productId);
+    if(!response.status){
+      handleError('Some  Unexpected  Error  Occured');
+    }else{
+      handleSuccess((action  == 'order')? 'Order  Placed  Successfully' :'Added  To   Cart Successfully');
+      setTimeout(() => navigate('/user/orders'),2000);
     }
   }
-
-  const  handleAddToCart = async  () => {
-    try{
-      const response = await  manageCart(localStorage.getItem('token'),localStorage.getItem('userType'),{
-        productId: productId,
-        type: "add",
-      });
-
-      if(!response.status){
-        handleError('Some  Unexpected  Error  Occured');
-      }else{
-        handleSuccess('Added  To   Cart Successfully');
-        setTimeout(() => navigate('/user/orders'),2000);
-      }
-
-    }catch(error){
-      handleError(error.message);
-    }
-  }
-
 
   return (
     <>
@@ -178,7 +129,10 @@ function ProductDetailUser({ productId }) {
             </li>
           </ul>
           <div className="btnCont flex justify-end">
-            <button className="text-xs  px-2 py-1 rounded-md  bg-blue-600  hover:bg-blue-700   text-white  font-semibold mt-4" onClick={(userCart.includes(productData.productId)  ? handlePlaceOrder :   handleAddToCart)}>
+            <button className="text-xs  px-2 py-1 rounded-md  bg-blue-600  hover:bg-blue-700   text-white  font-semibold mt-4" onClick={ ()  => {
+                const action = userCart.includes(productData.productId) ? 'order' : 'cart';
+                managePlaceOrderOrAddToCart(action);
+            }}>
               {(userCart.includes(productData.productId)  ? 'Buy Now' :   'Add To Cart')}
             </button>
           </div>

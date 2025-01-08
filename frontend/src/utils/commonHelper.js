@@ -1,5 +1,8 @@
 import   {profilePicUpload} from "../api/user"
-
+import { fetchAllProducts } from "../utils/productHelpers";
+import { fetchAllCategories } from "../utils/categoryHelpers";
+import { fetchAllSubCategories } from "../utils/categoryHelpers";
+import  {changeStatusProduct} from  "../api/product"
 
 export  const isEmptyObject = (obj) =>   {
     return  Object.values(obj).some((value) =>   {
@@ -17,6 +20,16 @@ export const  getLocalStorageVariables = (action)  => {
 export  const setLocalStorageVariables  = (keysValuesObj)  =>{
     for(let key in keysValuesObj){
         localStorage.setItem(key,keysValuesObj[key]);
+    }
+}
+
+export const removeLocalStorageVariables  =  (action) => {
+    if(action == 'all')
+    {
+      localStorage.removeItem('token')
+      localStorage.removeItem('userType')
+    }else{
+      localStorage.removeItem(action);
     }
 }
 
@@ -46,4 +59,39 @@ export const handlePicUploadFn = async (e) => {
         return {status: false,message: error.message}
       }
     }
-  };
+}
+
+export  const  handleSearchLogic  =  async (searchQuery) =>  {
+  const productsResponseData = await fetchAllProducts();
+  const categoriesResponseData  =  await fetchAllCategories();
+  const subCategoriesResponseData   =  await fetchAllSubCategories();
+
+  const products = productsResponseData.map((data) => ({name: data.name,link:`/product/${data.productId}`}));
+  const categories = categoriesResponseData.map((data) => ({name:  data.name,link:`/products/${data.name}`}));
+  const subCategories  = subCategoriesResponseData.map((data) => ({name: data,link: `/products/${data.split('-')[1]}/${data.split('-')[0]}`}));
+
+  const  searchData = [...products,...categories,...subCategories];
+
+  const filteredResults = searchData.filter((item) =>
+  {
+    if(item.name.toLowerCase().includes(searchQuery.toLowerCase().trim())) return item;
+  }
+  );
+
+  return  filteredResults;
+
+}
+
+export const handleSellerProductActiveAndInactiveStatus = async (productId,currentStatus)  => {
+  try{
+    const [token,userType] = getLocalStorageVariables('all');
+    const response  =  await changeStatusProduct(token,userType,{productId:productId,currentStatus:(currentStatus.toLowerCase() == 'active') ? 1  : 0});
+    
+  if(!response.status)
+    return  {status: true,message: response.message};
+  
+  return {status:true,message: "Product  Status Updated  Successfully"}
+  }catch(error){
+    return {status:false,message:  error.message};
+  }
+}
