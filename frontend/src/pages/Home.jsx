@@ -5,8 +5,8 @@ import CategorySection from "../components/CategorySection";
 import Footer from "../components/Footer";
 import MultiCardDisplaySection from "../components/MultiCardDisplaySection";
 import Loader from "../components/Loader";
-import  {fetchAllProducts}  from "../utils/productHelpers";
-import  {fetchAllCategories}  from "../utils/categoryHelpers";
+import  {filterAllProducts}  from "../utils/productHelpers";
+import  {fetchAllCategories}  from "../utils/categoryHelpers"
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -15,9 +15,8 @@ function Home() {
 
   useEffect(() => {
     async  function  main(){
-
       //fetching Products for  home  Page
-      const productsData = await fetchAllProducts();
+      const productsData = await filterAllProducts();
       setProducts(productsData.reverse());
       if(productsData.length >  0) setLoader(false);
 

@@ -1,4 +1,3 @@
-import { getOrders } from "../api/order";
 import { getProducts, getProductDetail,updateProductView ,getSellerProducts, getSellerAllOrders} from "../api/product";
 import  {getLocalStorageVariables} from "../utils/commonHelper"
 
@@ -47,6 +46,37 @@ export const filterAllProducts = async (queryParameter1, queryParameter2) => {
 
   return responseData;
 };
+
+export const filterProductsForHomePage = async (keyName,operand,keyValue,limit  = null) => {
+  const responseProducts = await fetchAllProducts();
+
+  const  allowedOperandLists =  ['=','>','<','>=','<='];
+  
+  if(allowedOperandLists.indexOf(operand) ==  -1) operand = '==' ;
+  else  if(operand == "=") operand =  '==';
+
+  const requiredData = responseProducts.filter((items) => {
+    if(operand == '=='  && items[keyName] == keyValue)
+    {
+      return items;
+    }else  if(operand ==  '>' &&  items[keyName]  > keyValue){
+      return items;
+    }else if(operand == '<'  && items[keyName] < keyValue)
+    {
+      return  items;
+    }else  if(operand ==  '>=' &&  items[keyName]  >= keyValue){
+      return items;
+    }else if(operand == '<='  && items[keyName] <= keyValue)
+    {
+      return  items;
+    }
+  });
+
+  if(limit !== null) requiredData.splice(limit);
+  
+  return requiredData;
+
+}
 
 export const fetchProduct = async (productId) => {
   try {

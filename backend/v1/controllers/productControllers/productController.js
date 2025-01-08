@@ -387,7 +387,6 @@ module.exports.getSellerOrders = async (req,res) => {
   }
 }
 
-
 module.exports.updateStatusProductController = async (req, res) => {
   try {
     const { productId, currentStatus } = req.body;
