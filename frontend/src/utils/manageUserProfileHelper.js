@@ -168,7 +168,7 @@ export const manageUserAdminPageData = async (user,setUser,productId_or_orderId,
       ),
       manage_orders: (
         <ProductList title={"Manage Products"} type={"manage_orders"} />
-      ),
+      )
     },
     specialPage: {
       seller: {

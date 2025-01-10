@@ -5,7 +5,7 @@ import { Carousel } from "flowbite-react";
 function Cards({ imageSrcs, imageAlt, title, description, link }) {
   return (
     <Link  to={link}>
-    <div className="card snap-center shrink-0 border cursor-pointer md:w-52 w-40 md:h-64 h-64 shadow-md flex items-center justify-between flex-col rounded-lg overflow-hidden">
+    <div className="card snap-center shrink-0 border cursor-pointer md:w-52 w-40 md:h-64 h-64 shadow-sm flex items-center justify-between flex-col rounded-lg overflow-hidden">
       <Carousel
         pauseOnHover
         indicators={false}

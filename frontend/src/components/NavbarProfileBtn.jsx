@@ -8,7 +8,7 @@ function NavbarProfileBtn({dropDownOptions, currentUser}) {
     setIsOpen((prev) => !prev);
   };
 
-  const imageSrc  =  "/assets/user.png";
+  const imageSrc  =  "/assets/userImage.avif";
 
   return (
     <div className="profileBtnMainContainer relative">
@@ -19,7 +19,7 @@ function NavbarProfileBtn({dropDownOptions, currentUser}) {
       <img
         src={imageSrc}
         alt="profile"
-        className="object-cover w-8 h-8 rounded-full border"
+        className="object-cover w-10 h-10   hover:scale-105 hover:border-blue-500 hover:border-2  transition-all  duration-400 rounded-full"
       />
     </div>
     <ul className={isOpen ? "absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10 h-fit overflow-hidden" : "absolute right-0 mt-2 w-48 h-0 overflow-hidden" }>

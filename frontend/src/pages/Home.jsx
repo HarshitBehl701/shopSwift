@@ -5,21 +5,19 @@ import CategorySection from "../components/CategorySection";
 import Footer from "../components/Footer";
 import MultiCardDisplaySection from "../components/MultiCardDisplaySection";
 import Loader from "../components/Loader";
-import  {filterAllProducts}  from "../utils/productHelpers";
 import  {fetchAllCategories}  from "../utils/categoryHelpers"
+import  {mainPageHelper} from  "../utils/pageDataInsertHelpers";
 
 function Home() {
-  const [products, setProducts] = useState([]);
+  const [pageData, setPageData] = useState([]);
   const [loader, setLoader] = useState(true);
   const [categories,setCategories]  = useState([]);
 
   useEffect(() => {
     async  function  main(){
       //fetching Products for  home  Page
-      const productsData = await filterAllProducts();
-      setProducts(productsData.reverse());
-      if(productsData.length >  0) setLoader(false);
-
+      const responsePageData = await mainPageHelper();
+      setPageData(responsePageData);
       //fetching Categories  for  Home  Page
       const categoriesData = await fetchAllCategories();
       setCategories(categoriesData)
@@ -27,6 +25,10 @@ function Home() {
 
     main();
   }, []);
+
+  useEffect(()  => {
+    if(pageData.length >  0) setLoader(false);
+  },[pageData])
 
   return (
     <>
@@ -41,13 +43,14 @@ function Home() {
             : "productContainer w-full  min-h-36 relative mt-12"
         }
       >
-        {loader ? (
-          <Loader />
-        ) : (
-          <MultiCardDisplaySection
-            heading={"Our Top  Collections"}
-            cardsData={products}
-          />
+        {loader && <Loader />}
+        {!loader &&  pageData.map((val,index)  => {
+          return  <MultiCardDisplaySection
+          key={index}
+          heading={val.heading}
+          cardsData={val.data}
+        />  
+        }
         )}
       </div>
 
