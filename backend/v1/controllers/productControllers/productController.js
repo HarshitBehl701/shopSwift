@@ -222,6 +222,61 @@ module.exports.getAllProducts = async (_, res) => {
   }
 };
 
+module.exports.getAllFilteredProducts  = async  (req,res)  => {
+  try{
+    const {condition,limit} = req.body;
+
+    const response =  await productModal.find({is_active:1}).populate({path: "sellerId",select: 'brandname'}).populate({path: "category",select:  "name"}).populate({path:"sub_category",select: "name"});
+    
+    const dataArray = response.map((product) => ({
+      productId: product._id,
+      name: product.name,
+      image: product.image,
+      brandName: product.sellerId.brandname,
+      category: product.category.name,
+      subCategory: product.sub_category.name,
+      price: product.price,
+      discount: product.discount,
+      platformFee: product.platformFee,
+      description: product.description,
+      views: product.views,
+      rating: product.average_rating,
+      number_of_customer_rate: product.number_of_user_give_rating,
+      status: product.is_active ? "Active" : "Inactive",
+    }))
+
+    const { fieldName, operand, requiredValue }  =  condition;
+
+    const requiredData = dataArray.filter((obj)   =>{
+        if(obj[fieldName])
+        {
+          if(operand  ==  '=='   &&  obj[fieldName]  == requiredValue){
+            return true;
+          }else if(operand  ==  '>='  &&  obj[fieldName]  >= requiredValue){
+            return  true;
+          }else if(operand  ==  '<='  &&  obj[fieldName]  <= requiredValue){
+            return  true;
+          }else if(operand  ==  '>'  &&  obj[fieldName]  > requiredValue){
+            return true;
+          }else if(operand  ==  '<'  &&  obj[fieldName]  < requiredValue){
+            return true;
+          }else{
+            return false
+          }
+        }
+        return false
+    })
+
+    requiredData.splice(limit);
+
+    return res.status(200).send({message:  "Resources Found",status:true,data:requiredData});
+
+  }catch(error){
+    
+    return  res.status(500).send({message: "Interanal  Server Error",status:false});
+  }
+}
+
 module.exports.getProductDetails = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -239,12 +294,27 @@ module.exports.getProductDetails = async (req, res) => {
       .populate({
         path: "sub_category",
         select: "name",
+      }).populate({
+        path:  "commentId",
+        populate:  {
+          path:  "customerId",
+        }
       });
 
     if (!response)
       return res
         .status(500)
         .send({ message: "Internal Server Error", status: false });
+
+    const comments  =  response.commentId.map((comment)  => ({
+      user: comment.customerId.name,
+      picture: comment.customerId.picture,
+      dateOfComment: formatDate(comment.createdAt),
+      comment: comment.comment,
+      productId: comment.productId,
+      customerId: comment._id,
+      orderId: comment.orderId,
+    }))
 
     const product = {
       productId: response._id,
@@ -260,6 +330,7 @@ module.exports.getProductDetails = async (req, res) => {
       description: response.description,
       rating: response.average_rating,
       customer_rate: response.num_of_user_give_rating,
+      comments: comments,
     };
 
     return res
@@ -308,6 +379,11 @@ module.exports.getSellerProducts = async (req, res) => {
       .populate({
         path: "sub_category",
         select: "name",
+      }).populate({
+        path:  'commentId',
+        populate:  {
+          path: 'customerId',
+        }
       });
 
     if (!products || products.length == 0)
@@ -330,6 +406,18 @@ module.exports.getSellerProducts = async (req, res) => {
         views: product.views,
         rating: product.average_rating,
         number_of_customer_rate: product.number_of_user_give_rating,
+        comments: product.commentId.map((obj)  => {
+          return  {
+            commentId: obj._id,
+            comment: obj.comment,
+            dateOfComment: formatDate(obj.createdAt),
+            productId: obj.productId,
+            orderId: obj.orderId,
+            user: obj.customerId.name,
+            picture: obj.customerId.picture,
+            status: obj.is_active
+          }
+        }),
         status: product.is_active ? "Active" : "Inactive",
       };
     });

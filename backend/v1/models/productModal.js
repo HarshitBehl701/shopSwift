@@ -48,6 +48,12 @@ const productSchema = mongoose.Schema({
     type:  Number,
     default: 0
   },
+  commentId: [
+    {
+      type:  mongoose.Schema.Types.ObjectId,
+      ref: "comment"
+    }
+  ],
   is_active: {
     type: Number,
     enum: [0,1],

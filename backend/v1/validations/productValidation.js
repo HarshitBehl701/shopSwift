@@ -48,4 +48,13 @@ const  updateViewProductValidation = Joi.object({
   action:  Joi.string().valid('add_view','update_rating').required()
 })
 
-module.exports = {createProductValidation,editProductValidation,updateStatusProductValidation,updateRatingProductValidation,updateViewProductValidation};
+const productFilterValidations  = Joi.object({
+  condition: Joi.object({
+    fieldName: Joi.string().required(),
+    operand:  Joi.string().valid('==','>=','<=','>','<').required(),
+    requiredValue: Joi.required()
+  }),
+  limit: Joi.number().min(1).required()
+})
+
+module.exports = {createProductValidation,editProductValidation,updateStatusProductValidation,updateRatingProductValidation,updateViewProductValidation,productFilterValidations};

@@ -5,7 +5,6 @@ const validate = (schema) => (req, res, next) => {
       console.log(error.details[0].message)
       return res.status(400).json({ error: error.details[0].message });
     }
-    
     next();
   } catch (error) {
     console.error("Validation Middleware Error:", error);

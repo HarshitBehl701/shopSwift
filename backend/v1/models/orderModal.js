@@ -13,17 +13,23 @@ const orderSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "seller",
   },
+  commentId: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "comment",
+    }
+  ],
   amount: Number,
   quantity: Number,
   rating: {
     type: Number,
     max: 5,
     min:  0,
-    default: 0
+    default: null
   },
   status: {
     type: String,
-    enum: ["ordered" , "canceled" , "pending", "out for delivery", "delivered"],
+    enum: ["ordered" , "cancelled" , "processing", "out for delivery", "delivered"],
     default: "ordered",
   },
   is_active: {
