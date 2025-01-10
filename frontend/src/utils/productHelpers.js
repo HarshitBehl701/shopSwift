@@ -1,4 +1,4 @@
-import { getProducts, getProductDetail,updateProductView ,getSellerProducts, getSellerAllOrders} from "../api/product";
+import { getProducts, getProductDetail,updateProductView ,getSellerProducts, getSellerAllOrders, getFilteredProducts,changeCommentStatus} from "../api/product";
 import  {getLocalStorageVariables} from "../utils/commonHelper"
 
 export const fetchAllProducts = async () => {
@@ -90,6 +90,33 @@ export const fetchProduct = async (productId) => {
   }
 };
 
+export const  fetchSpecificProductCategory  =  async (category,limit  = 1) => {
+  try{
+      const response = await getFilteredProducts({fieldName:"category",operand:"==",requiredValue:  category},limit);
+      return response.data;
+  }catch(error){
+    return   {status:false,message:  error.message};
+  }
+}
+
+export const  fetchSpecificMinViewsProducts  =  async (minViews,limit  = 1) => {
+  try{
+      const response = await getFilteredProducts({fieldName:"views",operand:">=",requiredValue:  minViews},limit);
+      return response.data;
+  }catch(error){
+    return   {status:false,message:  error.message};
+  }
+}
+
+export const  fetchSpecificRatingProducts  =  async (minRating,limit  = 1) => {
+  try{
+      const response = await getFilteredProducts({fieldName:"rating",operand:">=",requiredValue:  minRating},limit);
+      return response.data;
+  }catch(error){
+    return   {status:false,message:  error.message};
+  }
+}
+
 export const updateProductViewsFn = async (productId) => {
   try {
     const response = await updateProductView({
@@ -105,6 +132,16 @@ export const updateProductViewsFn = async (productId) => {
     return { status: false, message: error.message };
   }
 };
+
+export const updateCommentStatus = async (productId,orderId,status,commentId) => {
+  try{
+      const [token,userType]   = getLocalStorageVariables('all')
+      const response = await changeCommentStatus(token,userType,productId,orderId,status,commentId);
+      return response;
+  }catch(error){
+      return {status:false,message:error.message}
+  }
+}
 
 //for seller
 export  const fetchAllSellerProducts = async  (type,additionalData=null)   =>{

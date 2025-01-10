@@ -98,7 +98,7 @@ function UserProfile() {
           </div>
 
           {/* Right Section: User Information */}
-          <div className="rightSection flex-1 p-4 bg-white rounded-md border border-gray-200 shadow-sm">
+          <div className="rightSection flex-1 p-4 bg-white rounded-md">
             <div className="contentSection mb-4">
               <ul className="space-y-2">
                 {Array.isArray(profileFields) && profileFields.length > 0  && profileFields.map((item, index) => {

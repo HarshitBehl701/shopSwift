@@ -10,11 +10,11 @@ function Footer() {
           <ul className="md:w-1/6 w-full">
             <li className="flex items-center  gap-2">
               <img
-                src="https://flowbite.com/docs/images/logo.svg"
+                src="/assets/logoBgRemove.png"
                 className="h-12   cursor-pointer"
                 alt="Flowbite Logo"
               />
-              <h5 className="text-xl font-semibold cursor-pointer hover:text-blue-500">
+              <h5 className="text-2xl font-semibold cursor-pointer hover:text-blue-400">
                 Scatch
               </h5>
             </li>
@@ -62,7 +62,7 @@ function Footer() {
           </ul>
         </div>
       </footer>
-      <div className="lowerSection text-white text-sm bg-zinc-800 w-full py-2">
+      <div className="lowerSection text-white text-xs bg-zinc-800 w-full py-2">
           <p className="text-white  text-center">© 2024 All Rights Reserved. Scatch </p>
         </div>
     </>

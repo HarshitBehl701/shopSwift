@@ -11,6 +11,17 @@ export const getProducts = async () => {
   }
 };
 
+export  const getFilteredProducts   = async  (condition,limit) =>{
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/product/get_filtered_products`,{condition:condition,limit:limit}
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : new Error("Network Error");
+  }
+}
+
 export const createProduct = async (token, userType, data) => {
   try {
     const formData = new FormData();
@@ -170,5 +181,24 @@ export const editProduct = async (token,userType,productId,data) => {
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : new Error("Networks Error");
+  }
+}
+
+export const changeCommentStatus  = async  (token,userType,productId,orderId,status,commentId)  =>  {
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/comment/comment-status-update/${productId}/${orderId}`,
+      {status:status,commentId:commentId},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-User-Type": userType,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : new Error("Network Error");
   }
 }

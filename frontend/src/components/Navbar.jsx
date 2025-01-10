@@ -17,11 +17,7 @@ function Navbar({ currentPage }) {
             to="/home"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              className="h-8"
-              alt="Flowbite Logo"
-            />
+            <div className="h-10 w-10 rounded-full  bg-[length:54px_44px]    bg-center" style={{backgroundImage:"url('/assets/logo.jpg')"}}></div>
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-blue-600">
               Scatch
             </span>
@@ -55,7 +51,7 @@ function Navbar({ currentPage }) {
             </svg>
           </button>
           <div
-            className='block  w-full md:block md:w-auto'
+            className={`${isDropMenuOpen ? 'block'  :  'hidden'} w-full md:block md:w-auto`}
             id="navbar-default"
           >
             <NavbarMenus currentPage={currentPage} />

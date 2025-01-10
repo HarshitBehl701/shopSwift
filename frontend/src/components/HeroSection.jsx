@@ -2,7 +2,7 @@ import React from "react";
 import { Carousel } from "flowbite-react";
 
 function HeroSection() {
-  const imagesArr = ["slider1.jpg", "slider2.jpg"];
+  const imagesArr = ["image1.jpg", "image2.jpg"];
   const sliderText = [
     {
       title: "Welcome to Your Dream Store",
@@ -25,9 +25,9 @@ function HeroSection() {
             alt={image}
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-50 text-white w-full h-full flex items-center justify-center flex-col">
-            <h1 className="md:text-3xl  md:mb-2 mb-1">{sliderText[index].title}</h1>
-            <p  className="md:w-[50%] w-[70%] md:text-sm text-xs text-center italic">{sliderText[index].description}</p>
+          <div className="absolute inset-0 bg-black bg-opacity-50  backdrop-blur-sm text-white w-full h-full flex items-center justify-center flex-col">
+            <h1 className="md:text-5xl text-xl md:mb-2 mb-1">{sliderText[index].title}</h1>
+            <p  className="md:w-[50%] w-[70%] md:text-xl  font-light text-xs text-center italic">{sliderText[index].description}</p>
           </div>
         </div>
       ))}

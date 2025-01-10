@@ -11,10 +11,13 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import ExpandableDescription from "../components/ExpandableDescription";
 import { fetchAllProducts,fetchProduct,updateProductViewsFn } from "../utils/productHelpers";
 import  {fetchUserCartWhislistData,handleUserCartOrWhislist}  from "../utils/manageUserProfileHelper";
+import Comments from "../components/Comments";
+import { getLocalStorageVariables } from "../utils/commonHelper";
 
 function Product() {
   const location = useLocation();
   const { productId } = useParams();
+  const [userType] =  getLocalStorageVariables('userType');
 
   const [product, setProduct] = useState({
     name: "",
@@ -34,6 +37,7 @@ function Product() {
   const [userCartWhislistData, setUserCartWhislistData] = useState({});
   const [isCurrentProductAlreadyInCart, setIsCurrentProductAlreadyInCart] = useState(false);
   const [isCurrentProductAlreadyInWhisList,setIsCurrentProductAlreadyInWhislist] = useState(false);
+  const [commentData,setCommentData] = useState([]);
 
   useEffect(() => {
 
@@ -42,7 +46,7 @@ function Product() {
       //fetching product data
       const productData = await fetchProduct(productId);
       setProduct(productData);
-
+      setCommentData(productData.comments);
       //fetching products data
       const productsData = await fetchAllProducts();
       setProducts(productsData);
@@ -53,18 +57,16 @@ function Product() {
 
   }, [location]);
 
-  
   useEffect(() => {
-
     const main = async ()  =>{
 
       //fetching  user  Cart and whislist data
       const userCartWhislistsData = await fetchUserCartWhislistData();
-      setUserCartWhislistData(userCartWhislistsData);
+      setUserCartWhislistData(userCartWhislistsData.data);
 
       //checks if the current product is already  in the  cart or  not
       setIsCurrentProductAlreadyInCart(false);
-      userCartWhislistData.cart?.forEach((item) => {
+      userCartWhislistData?.cart?.forEach((item) => {
         if (item._id == productId) {
           setIsCurrentProductAlreadyInCart(true);
         }
@@ -72,7 +74,7 @@ function Product() {
 
       //checks  if the current product is already in the  whislist or not
       setIsCurrentProductAlreadyInWhislist(false);
-      userCartWhislistData.whislist?.forEach((item) => {
+      userCartWhislistData?.whislist?.forEach((item) => {
         if (item._id == productId) {
           setIsCurrentProductAlreadyInWhislist(true);
         }
@@ -139,7 +141,7 @@ function Product() {
               <h1 className="font-semibold text-xl text-gray-900">
                 {product.name}
               </h1>
-              <button onClick={handleManageWhislist}>
+              {userType  == 'user'  &&  <button onClick={handleManageWhislist}>
                 <FontAwesomeIcon
                   icon={faHeart}
                   className={
@@ -148,7 +150,7 @@ function Product() {
                       : "text-gray-500 text-2xl"
                   }
                 />
-              </button>
+              </button>}
             </div>
 
             <ul className="w-full bg-white shadow-lg rounded-lg overflow-hidden">
@@ -212,7 +214,7 @@ function Product() {
             </ul>
 
             {/* Cart Button */}
-            <button
+            {userType   == 'user'  &&  <button
               className={`w-full text-sm px-6 py-3 rounded-xl shadow-lg mt-6 font-semibold transition-all duration-300 ease-in-out ${
                 isCurrentProductAlreadyInCart
                   ? "bg-red-600 hover:bg-red-700 text-white"
@@ -223,10 +225,13 @@ function Product() {
               {isCurrentProductAlreadyInCart
                 ? "Remove From Cart"
                 : "Add To Cart"}
-            </button>
+            </button>}
           </div>
         </div>
       </div>
+
+      {/* Comments Section */}
+      <Comments data={commentData} />
 
       {/* Similar Products Section */}
       <h2 className="text-2xl font-semibold mx-8 mt-12 text-gray-800">
