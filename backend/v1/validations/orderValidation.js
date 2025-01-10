@@ -5,4 +5,12 @@ const createOrderSchema = Joi.object({
   quantity: Joi.number().min(1).required(),
 });
 
-module.exports = { createOrderSchema };
+const  updateOrderStatusSchema  = Joi.object({
+  status:  Joi.string().valid("ordered" , "cancelled" , "processing", "out for delivery", "delivered").required()
+})
+
+const updateRatingSchema = Joi.object({
+  rating:  Joi.number()
+})
+
+module.exports = { createOrderSchema ,updateOrderStatusSchema ,updateRatingSchema};
