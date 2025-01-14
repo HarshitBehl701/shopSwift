@@ -8,6 +8,7 @@ import Loader from "../components/Loader";
 import  {fetchAllCategories}  from "../utils/categoryHelpers"
 import  {mainPageHelper} from  "../utils/pageDataInsertHelpers";
 
+
 function Home() {
   const [pageData, setPageData] = useState([]);
   const [loader, setLoader] = useState(true);
