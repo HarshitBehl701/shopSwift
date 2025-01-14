@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function Footer() {
   return (
     <>
-      <div className="getEmailUpdates  w-full py-1   px-3 bg-slate-100"></div>
+      <div className="divider  w-full py-1   px-3 bg-slate-100"></div>
       <footer className="w-full h-fit bg-[#2D3142]">
         <div className="upperSection text-white flex flex-wrap  gap-4 pt-12 pb-8 md:px-20 px-8 justify-between  w-full ">
           <ul className="md:w-1/6 w-full">

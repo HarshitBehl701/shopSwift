@@ -1,7 +1,6 @@
 const db = require("../../config/db");
 const userModal = require("../../models/userModal");
 const productModal = require("../../models/productModal");
-const orderModal = require("../../models/orderModal");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
