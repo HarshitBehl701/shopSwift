@@ -17,7 +17,7 @@ import { getLocalStorageVariables } from "../utils/commonHelper";
 function Product() {
   const location = useLocation();
   const { productId } = useParams();
-  const [userType] =  getLocalStorageVariables('userType');
+  const userType =  getLocalStorageVariables('userType');
 
   const [product, setProduct] = useState({
     name: "",
@@ -84,7 +84,7 @@ function Product() {
       
     }
 
-    main();
+    if(userType) main();
 
   }, [product]);
 

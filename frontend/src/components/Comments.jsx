@@ -1,15 +1,6 @@
 import React from 'react';
 
 function Comments({data}) {
-console.log(data);
-    const sampleComments = [
-        {
-          id: 1,
-          user: 'John Doe',
-          comment: 'Great product! Highly recommend it.',
-          timestamp: 'Jan 8, 2025, 10:15 AM',
-        }
-      ];
   return (
     <div className="px-14 py-6 w-[90%] shadow-md border mx-auto rounded-md bg-white">
       <h1 className="font-semibold text-lg mb-4">Comments</h1>
