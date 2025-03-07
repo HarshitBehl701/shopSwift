@@ -13,6 +13,8 @@ export default function UserDashboard() {
   useEffect(() => {
     if(filteredOrders===   null  &&  Array.isArray(userOrders) &&  userOrders.length  >0)
       setFilteredOrders(userOrders.slice(0,5));
+    else if(filteredOrders===   null)
+        setFilteredOrders([]);
   },[filteredOrders,userOrders]);
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">

@@ -18,9 +18,9 @@ function OrderCartWhislistList() {
     if(products && userData)
     {
       if(requestedPage?.includes("cart"))
-        setFilteredProduct([...new Set(products.filter((product) => userData?.user_cart.split(",").includes(product.id.toString())))]);
+        setFilteredProduct([...new Set(products.filter((product) => userData?.user_cart ? userData?.user_cart.split(",").includes(product.id.toString()) :  false))]);
       else if(requestedPage?.includes("whislist"))
-        setFilteredProduct([...new Set(products.filter((product) => userData?.user_whislist.split(",").includes(product.id.toString())))]);
+        setFilteredProduct([...new Set(products.filter((product) => userData?.user_whislist ? userData?.user_whislist.split(",").includes(product.id.toString()) : false))]);
     }
   },[requestedPage,products,userData]);
   

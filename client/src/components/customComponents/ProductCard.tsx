@@ -24,11 +24,11 @@ function ProductCard({productData}:IProductCardParam) {
             userData?.user_whislist  ==  'string' && userData?.user_whislist.split(",").includes(productData.id.toString()) ?  "stroke-red-500" : "stroke-gray-500"}  scale-125 cursor-pointer`} fill={typeof 
             userData?.user_whislist  ==  'string' && userData?.user_whislist.split(",").includes(productData.id.toString()) ?  "red" : "none"} onClick={() => handleUserWhislist(productData.id)} />}
     </CardHeader>
-    <CardContent className="px-4">
+    <CardContent className="px-4   h-full">
       <h2 className="font-bold  capitalize text-gray-800 text-lg">{productData.product_name}</h2>
       <p className="font-semibold text-lg">₹ {productData.price - productData.discount} <small className="line-through  text-gray-400">({productData.price})</small></p>
       <p className="font-semibold capitalize">{productData.brand_name}</p>
-      <div className="text-gray-600 text-sm mt-1"><ExpandableDescription description={productData.description}  maxLength={35} /></div>
+      <div className="text-gray-600 text-sm mt-1"><ExpandableDescription description={productData.description}  maxLength={20} /></div>
       <div className="flex items-center justify-between mt-4">
         {isLoggedIn && <Button className={`text-xs w-full font-semibold cursor-pointer ${userData?.user_cart  && userData.user_cart.split(',').includes(productData.id.toString()) ?  'bg-red-500 hover:bg-red-600 text-white' : ''}`} onClick={() => handleUserCart(productData.id)}>{userData?.user_cart  && userData.user_cart.split(',').includes(productData.id.toString()) ? "Remove From Cart" : "Add To  Cart"}</Button>}
         {!isLoggedIn && <Button className="text-xs w-full font-semibold cursor-pointer">Show Details</Button>}

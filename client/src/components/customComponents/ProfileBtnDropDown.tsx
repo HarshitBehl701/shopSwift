@@ -12,7 +12,9 @@ const ProfileBtnDropDown = () => {
       <DropdownMenuTrigger className="flex cursor-pointer items-center space-x-2 text-gray-700">
       <Avatar  className="shadow-sm   border">
         <AvatarImage   className="object-cover" src={userData ? getImagePathUrl("user",userData.user_photo) : "https://github.com/shadcn.png"} />
-        <AvatarFallback>CN</AvatarFallback>
+        <AvatarFallback>
+          <img  src="https://github.com/shadcn.png" />
+        </AvatarFallback>
       </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="space-y-2">

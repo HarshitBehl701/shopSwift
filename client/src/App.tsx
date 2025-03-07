@@ -46,9 +46,11 @@ function App() {
               setIsLoggedIn(true);
             }else
             {
+              setIsLoggedIn(false);
               throw new Error(response.message);
             }
-        } catch (error) {
+          } catch (error) {
+          setIsLoggedIn(false);
           throw  new Error(handleCatchErrors(error));
         }
       })()
@@ -80,10 +82,14 @@ function App() {
                 }
             })
             }else{
+              setCategories([])
+              setSubCategories([])
               throw new Error("Something  Went  Wrong ,  Please  Try Again  Later");
             }
 
         } catch (error) {
+          setCategories([])
+              setSubCategories([])
             throw new Error(handleCatchErrors(error));
         }
       })()
@@ -101,9 +107,11 @@ function App() {
             const responseData = (response.data  as  IGetAllLiveProductsResponse);
             setProducts(responseData.products);
           }else{
+            setProducts([])
             throw  new   Error(response.message);
           }
         } catch (error) {
+          setProducts([])
           throw  new   Error(handleCatchErrors(error));
         }
       })();
@@ -121,8 +129,12 @@ function App() {
               const  responseData = (response.data as IGetAllUserOrdersResponse);
               setUserOrders(responseData.orders.reverse());
             }else
+            {
+              setUserOrders([])
               throw  new   Error(response.message);
-        } catch (error) {
+            }
+          } catch (error) {
+          setUserOrders([])
             throw  new  Error(handleCatchErrors(error));
         }
       })()

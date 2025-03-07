@@ -48,7 +48,7 @@ function OrdersListTable({filteredOrders}:IOrdersListTableParam) {
             </TableBody>
           </Table>}
           {!pageData &&  <LoadingTableSkeleton />}
-          {((Array.isArray(pageData) &&  pageData.length  === 0)) && <p className="italic text-gray-500">Your last 5 orders  will show  here...</p>}
+          {((Array.isArray(pageData) &&  pageData.length  === 0)) && <p className="italic text-gray-500">Your last  orders  will show  here...</p>}
     </>
   )
 }

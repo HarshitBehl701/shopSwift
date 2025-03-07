@@ -23,11 +23,11 @@ function Reviews({product_id}:IReviewsParam) {
             const responseData = (response.data as  IGetAllProductCommentsResponse).comments;
             setComments(responseData);
           }else{
-            setComments(null)
+            setComments([])
             throw new  Error(response.message);
           }
         } catch (error) {
-          setComments(null)
+          setComments([])
           throw new  Error(handleCatchErrors(error));
         }
       })()
