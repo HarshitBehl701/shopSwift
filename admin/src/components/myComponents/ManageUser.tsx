@@ -15,7 +15,7 @@ import UpdateAdmin from "./UpdateAdmin";
 function ManageUser({userType,userData,setUserData}:IManageUserParam) {
     const handleChangeStatus  = useCallback(async () =>{
         try {
-            const response   = (userType?.includes("user")) ? await  manageUser({user_id:(userData  as   IUserModal).id,is_active: userData.is_active ==  1  ? 0 : 1}) : (userType?.includes("seller") ?  await manageSeller({seller_id:(userData as ISellerModal).id,is_active:  userData.is_active == 1  ?   0   : 1}) : (userType?.includes("admin") ?  updateAdminAccount({admin_id:(userData as IAdminModal).id,is_active: userData.is_active ===  1 ? 0 : 1}) :  null));
+            const response   = (userType?.includes("user")) ? await  manageUser({user_id:(userData  as   IUserModal).id,is_active: userData.is_active ==  1  ? 0 : 1}) : (userType?.includes("seller") ?  await manageSeller({seller_id:(userData as ISellerModal).id,is_active:  userData.is_active == 1  ?   0   : 1}) : (userType?.includes("admin") ?  updateAdminAccount({admin_id:(userData as IAdminModal).admin_id,is_active: userData.is_active ===  1 ? 0 : 1}) :  null));
 
             if(response)
             {

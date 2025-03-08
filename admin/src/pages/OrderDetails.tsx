@@ -30,7 +30,7 @@ function OrderDetails() {
           if(response.status)
           {
             handleToastPopup({message:"Successfully Cancel The Order",type:"success"});
-            setOrder((prev) =>({...prev,order_status:"cancel"}));
+            setOrder((prev) =>({...prev,order_status:"Cancelled"}));
           }else{
             handleToastPopup({message:(response.message),type:"error"});
           }
