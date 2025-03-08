@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import React from "react";
 import { useAdminContext } from "@/contexts/userContext";
 import { ToastContainer } from "react-toastify";
 import { formatDate } from "@/utils/commonUtils";
@@ -10,7 +9,6 @@ import UpdateAdmin from "@/components/myComponents/UpdateAdmin";
 import { IAdminModal } from "@/interfaces/commonInterfaces";
 
 export default function Dashboard() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
   const  {adminData} = useAdminContext();
   return (
        <>
