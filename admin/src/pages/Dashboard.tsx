@@ -1,4 +1,3 @@
-import { Calendar } from "@/components/ui/calendar"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -42,13 +41,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Right: User Details */}
-          <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          className="rounded-md border  w-fit  border-gray-300    shadow-sm"
-          />
         </Card>
       </div>
       </div>
