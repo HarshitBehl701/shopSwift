@@ -2,10 +2,11 @@ import  mysql,{Pool} from  "mysql2/promise";
 import { responseStructure } from "../utils/commonHelpers";
 
 const   pool   =  mysql.createPool({
-    host: 'localhost',
-    user:  'root',
-    password: '',
-    database:  'shopswift',
+    host: process.env.DB_HOST  || 'localhost',
+    user:  process.env.DB_USER ||  'root',
+    password: process.env.DB_PASSWORD  || '',
+    port: parseInt(process.env.DB_PORT || '8000', 10),
+    database:  process.env.DB_DATABASE_NAME ||  'shopswift',
     waitForConnections: true,
     connectionLimit: 10, // Allow multiple connections
     queueLimit: 0, 
