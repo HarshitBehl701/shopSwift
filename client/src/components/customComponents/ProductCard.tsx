@@ -15,7 +15,7 @@ function ProductCard({productData}:IProductCardParam) {
 
   return (
     <>
-    <Link to={`/product_details/${encodeURIComponent(productData.product_name).toLowerCase()}?product_id=${productData.id.toString().toLowerCase()}&brand_name=${productData.brand_name.toLowerCase()}`} state={productData} className="block">
+    <Link to={`/product_details/${encodeURIComponent(productData.product_name).toLowerCase()}?product_id=${productData.id.toString().toLowerCase()}&brand_name=${productData.brand_name.toLowerCase()}`} state={productData} className="block w-full max-w-xs">
       <Card className="w-full cursor-pointer max-w-xs rounded-lg overflow-hidden shadow-lg bg-white">
       <CardHeader className="relative  p-0">
             <ImageCarousel mainCarouselCss="rounded-none" images={productData.images.split(',')} type="product" imageCss="h-44  w-full rounded-none object-contain" />
