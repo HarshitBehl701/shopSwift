@@ -28,7 +28,7 @@ function ImageCarousel({ images, type ,imageCss,mainCarouselCss}: IImageCarousel
                 <img
                   src={getImagePathUrl("main", 'logo.png')}
                   alt={image}
-                  className={"object-cover h-44"}
+                  className={"object-cover h-44 w-full"}
                 />
               </AvatarFallback>
             </Avatar>
