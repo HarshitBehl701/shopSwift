@@ -19,7 +19,7 @@ function ProductCard({productData}:IProductCardParam) {
     <Card className="w-full cursor-pointer max-w-xs rounded-lg overflow-hidden shadow-lg bg-white">
       <Link to={`/product_details/${encodeURIComponent(productData.product_name).toLowerCase()}?product_id=${productData.id.toString().toLowerCase()}&brand_name=${productData.brand_name.toLowerCase()}`} state={productData}>
     <CardHeader className="relative  p-0">
-          <ImageCarousel mainCarouselCss="rounded-none" images={productData.images.split(',')} type="product" imageCss="h-44  w-full rounded-none" />
+          <ImageCarousel mainCarouselCss="rounded-none" images={productData.images.split(',')} type="product" imageCss="h-44  w-full rounded-none object-contain" />
           {isLoggedIn && <Heart className={`absolute right-4 top-4 ${typeof 
             userData?.user_whislist  ==  'string' && userData?.user_whislist.split(",").includes(productData.id.toString()) ?  "stroke-red-500" : "stroke-gray-500"}  scale-125 cursor-pointer`} fill={typeof 
             userData?.user_whislist  ==  'string' && userData?.user_whislist.split(",").includes(productData.id.toString()) ?  "red" : "none"} onClick={() => handleUserWhislist(productData.id)} />}
